@@ -24,6 +24,15 @@
 .auth-card{width:min(100%,430px);background:rgba(255,255,255,.97);color:var(--ink);border-radius:20px;padding:26px;box-shadow:0 24px 70px rgba(0,0,0,.28)}
 .auth-mark{width:52px;height:52px;display:grid;place-items:center;border-radius:15px;margin-bottom:16px;background:linear-gradient(145deg,#bd4f88,#7b3d72);color:#fff;font:700 14px/1 Georgia,serif;letter-spacing:.08em}
 .auth-card h1{font-family:Georgia,serif;font-size:27px;margin:0 0 4px}.auth-card>p{margin:0 0 18px;color:var(--muted);font-size:13px}.auth-card .field{margin:11px 0}.auth-card .btn{width:100%;margin-top:6px}.auth-error{min-height:1.6em;margin:9px 0 0;color:#9b2f55;font-size:12px}.auth-note{margin-top:14px!important;font-size:11px!important;color:var(--muted)!important;text-align:center}.site-locked{display:none!important}
+
+/* A-D final fixes */
+.view-toggle{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.view-toggle .active{background:var(--plum);color:#fff;border-color:var(--plum)}
+.card-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}.gallery-card{border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden}.gallery-card button{all:unset;display:block;width:100%;cursor:pointer}.gallery-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}.gallery-info{padding:10px}.gallery-info h4{margin:7px 0}
+.people-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}.person-card{padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff;text-align:left}.person-card b{display:block}.person-card small{color:var(--muted)}
+.timeline{border-left:2px solid #d9c9db;margin-left:10px;padding-left:22px}.timeline-year{font-size:22px;font-weight:800;color:var(--plum);margin:20px 0 10px}.timeline-item{position:relative;background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px;margin-bottom:10px}.timeline-item:before{content:"";position:absolute;left:-29px;top:17px;width:10px;height:10px;border-radius:50%;background:#b65a91}
+.dashboard-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.dash-card{border:1px solid var(--line);border-radius:15px;padding:15px;background:#fff}.dash-num{font-size:28px;font-weight:800;color:var(--plum)}.recent-item{padding:9px 0;border-top:1px solid var(--line)}
+.status-cell.da{background:#fff0f1;border-color:#efb5ba}.status-cell.da small,.status-cell.da strong{color:#b83b47}.status-cell.vo{background:#eef5ff;border-color:#b8d2f3}.status-cell.vo small,.status-cell.vo strong{color:#356aa6}.status-cell.pf{background:#fff9df;border-color:#ead68c}.status-cell.pf small,.status-cell.pf strong{color:#9b7814}.status-cell.top-stat strong{font-weight:900;font-size:21px;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+@media(max-width:560px){.card-gallery{grid-template-columns:repeat(2,1fr)}}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 function fmtBytes(n){if(!Number.isFinite(n))return'-';const u=['B','KB','MB','GB'];let i=0;while(n>=1024&&i<u.length-1){n/=1024;i++}return `${n.toFixed(i?1:0)} ${u[i]}`}
 async function listStorageTree(prefix='private'){let total=0,count=0,storyBytes=0,cardBytes=0,storyCount=0,cardCount=0;async function walk(path){let offset=0;while(true){const {data,error}=await sb.storage.from(BUCKET).list(path,{limit:1000,offset,sortBy:{column:'name',order:'asc'}});if(error)throw error;if(!data?.length)break;for(const item of data){const child=path?`${path}/${item.name}`:item.name;if(item.id){const size=Number(item.metadata?.size||0);total+=size;count++;if(child.startsWith('private/cards/')){cardBytes+=size;cardCount++}else{storyBytes+=size;storyCount++}}else{await walk(child)}}if(data.length<1000)break;offset+=data.length}}await walk(prefix);return{total,count,storyBytes,cardBytes,storyCount,cardCount}}
@@ -34,76 +43,6 @@ $('#refreshStorageUsage')?.addEventListener('click',refreshStorageUsage);
 ['storyFilter','storyType','storySort'].forEach(id=>$('#'+id)?.addEventListener(id==='storyFilter'?'input':'change',renderStories));
 ['cardFilter','cardEraFilter','cardImplFilter','cardRarityFilter','cardBasicAttrFilter','cardMusicAttrFilter','cardYear','cardOwnedFilter','cardFeatureFilter','cardSourceFilter','cardSort'].forEach(id=>$('#'+id)?.addEventListener(id==='cardFilter'?'input':'change',renderCards));
 ['voiceFilter','voiceCategoryFilter','voiceTagFilter','voiceSort'].forEach(id=>$('#'+id)?.addEventListener(id==='voiceFilter'?'input':'change',renderVoices));
-
-
-let cardViewMode='detail';
-
-function cardGalleryHTML(list){
-  return `<div class="card-gallery">${list.map(c=>{
-    const bloom=(c.images||[]).find(im=>im.image_type==='bloomed');
-    const before=(c.images||[]).find(im=>im.image_type!=='bloomed');
-    const im=bloom||before;
-    return `<article class="gallery-card"><button ${im?`data-lightbox="${esc(im.url)}" data-caption="${esc(c.card_name)}"`:''}>${im?`<img src="${esc(im.url)}" alt="${esc(c.card_name)}">`:`<div style="aspect-ratio:3/4;display:grid;place-items:center;background:#f2edf4;color:#88798e">画像なし</div>`}<div class="gallery-info"><span class="tag">★${esc(c.rarity||'')}</span> <span class="tag">${esc(cardGame(c))}</span><h4>${esc(c.card_name)}</h4><div class="meta">${esc(c.release_date||'実装日未設定')} · ${esc(c.basicClass||c.attribute||'属性未設定')}</div></div></button></article>`
-  }).join('')}</div>`;
-}
-function applyCardView(){
-  const box=$('#cardList'); if(!box)return;
-  $('#cardViewDetail')?.classList.toggle('active',cardViewMode==='detail');
-  $('#cardViewGallery')?.classList.toggle('active',cardViewMode==='gallery');
-  if(cardViewMode==='gallery'){
-    const q=$('#cardFilter')?.value.toLowerCase()||'',yr=$('#cardYear')?.value||'',own=$('#cardOwnedFilter')?.value||'',era=$('#cardEraFilter')?.value||'',impl=$('#cardImplFilter')?.value||'',rar=$('#cardRarityFilter')?.value||'',ba=$('#cardBasicAttrFilter')?.value||'',ma=$('#cardMusicAttrFilter')?.value||'',feat=$('#cardFeatureFilter')?.value||'',src=$('#cardSourceFilter')?.value||'',sort=$('#cardSort')?.value||'date_desc';
-    let list=cards.filter(c=>(!q||matchText({...c,...c.music,...c.basic},q))&&(!yr||(c.release_date||'').startsWith(yr))&&(!own||(own==='owned'?!!c.owned:!c.owned))&&(!era||cardEra(c)===era)&&(!impl||c.game===impl)&&(!rar||String(c.rarity)===rar)&&(!ba||c.basicClass===ba)&&(!ma||c.attribute===ma)&&(!src||c.acquisition_type===src)&&(!feat||(feat==='mv'&&c.music?.mv_outfit_name)||(feat==='spp'&&c.music?.spp_song)||(feat==='both'&&c.music?.mv_outfit_name&&c.music?.spp_song)));
-    const val=(o,p)=>Number(p.split('.').reduce((x,k)=>x?.[k],o))||-Infinity;
-    const sm={date_desc:(a,b)=>(b.release_date||'').localeCompare(a.release_date||''),date_asc:(a,b)=>(a.release_date||'').localeCompare(b.release_date||''),rarity_desc:(a,b)=>Number(b.rarity)-Number(a.rarity),rarity_asc:(a,b)=>Number(a.rarity)-Number(b.rarity),basic_total_desc:(a,b)=>val(b,'basic.total')-val(a,'basic.total'),basic_da_desc:(a,b)=>val(b,'basic.da')-val(a,'basic.da'),basic_vo_desc:(a,b)=>val(b,'basic.vo')-val(a,'basic.vo'),basic_pf_desc:(a,b)=>val(b,'basic.pf')-val(a,'basic.pf'),music_total_desc:(a,b)=>val(b,'music.total')-val(a,'music.total'),music_da_desc:(a,b)=>val(b,'music.da')-val(a,'music.da'),music_vo_desc:(a,b)=>val(b,'music.vo')-val(a,'music.vo'),music_pf_desc:(a,b)=>val(b,'music.pf')-val(a,'music.pf')};
-    list.sort(sm[sort]||sm.date_desc);box.innerHTML=cardGalleryHTML(list)||'<div class="empty">条件に合うカードがありません。</div>';
-    $$('[data-lightbox]').forEach(b=>b.onclick=()=>openLightbox(b.dataset.lightbox,b.dataset.caption));
-  }
-}
-$('#cardViewDetail')?.addEventListener('click',()=>{cardViewMode='detail';renderCards()});
-$('#cardViewGallery')?.addEventListener('click',()=>{cardViewMode='gallery';renderCards();applyCardView()});
-const _renderCardsAD=renderCards;
-renderCards=function(){_renderCardsAD();if(cardViewMode==='gallery')applyCardView()};
-
-function collectPeople(){
-  const m=new Map(),add=(name,type,obj)=>{name=String(name||'').trim();if(!name||name==='七種 茨')return;if(!m.has(name))m.set(name,{name,stories:[],screens:[],voices:[]});m.get(name)[type].push(obj)};
-  stories.forEach(x=>(x.tags||[]).forEach(t=>add(t,'stories',x)));
-  screenshots.forEach(x=>(x.character_tags||x.tags||[]).forEach(t=>add(t,'screens',x)));
-  voices.forEach(x=>(x.tags||[]).forEach(t=>{if(!/^(春|夏|秋|冬|朝|昼|夕|夜|周年|誕生日|キャンペーン|バレンタイン|クリスマス|ハロウィン|お正月|ホワイトデー)$/.test(t))add(t,'voices',x)}));
-  return [...m.values()].sort((a,b)=>a.name.localeCompare(b.name,'ja'));
-}
-function renderPeople(){
-  const q=$('#personSearch')?.value.trim()||'',p=collectPeople().filter(x=>!q||x.name.includes(q));
-  $('#peopleList').innerHTML=p.map(x=>`<button class="person-card" data-person="${esc(x.name)}"><b>${esc(x.name)}</b><small>ストーリー ${x.stories.length} / スクショ ${x.screens.length} / ボイス ${x.voices.length}</small></button>`).join('')||'<div class="empty">人物タグがまだありません。</div>';
-  $$('[data-person]').forEach(b=>b.onclick=()=>showPerson(b.dataset.person));
-}
-function showPerson(name){
-  const x=collectPeople().find(p=>p.name===name);if(!x)return;
-  $('#personDetail').innerHTML=`<div class="panel"><h3>${esc(name)}</h3><div class="cross-section"><h4>関連ストーリー</h4>${x.stories.map(v=>`<div class="resultrow"><b>${esc(v.title)}</b><div class="meta">${esc(v.episode||'')}</div></div>`).join('')||'<div class="empty">なし</div>'}</div><div class="cross-section"><h4>関連スクショ</h4><div class="meta">${x.screens.length}件</div></div><div class="cross-section"><h4>関連ボイス</h4>${x.voices.map(v=>`<div class="resultrow"><b>${esc(v.voice_name)}</b><p>${esc(v.voice_text||'')}</p></div>`).join('')||'<div class="empty">なし</div>'}</div></div>`;
-}
-$('#personSearch')?.addEventListener('input',renderPeople);
-
-function timelineData(){
-  const a=[];
-  cards.forEach(x=>x.release_date&&a.push({type:'card',date:x.release_date,title:x.card_name,sub:`★${x.rarity||''} ${x.event_or_scout_name||x.acquisition_type||''}`}));
-  stories.forEach(x=>{const d=storyDate(x);if(d)a.push({type:'story',date:String(d).slice(0,10),title:x.title,sub:x.episode||''})});
-  voices.forEach(x=>x.release_date&&a.push({type:'voice',date:x.release_date,title:x.voice_name,sub:x.voice_text||''}));
-  return a;
-}
-function renderTimeline(){
-  const type=$('#timelineType')?.value||'',ord=$('#timelineOrder')?.value||'desc';let a=timelineData().filter(x=>!type||x.type===type);a.sort((x,y)=>ord==='asc'?x.date.localeCompare(y.date):y.date.localeCompare(x.date));
-  let year='';$('#timelineList').innerHTML=a.map(x=>{const y=x.date.slice(0,4),head=y!==year?`<div class="timeline-year">${year=y}</div>`:'';const label={card:'カード',story:'ストーリー',voice:'ボイス'}[x.type];return `${head}<div class="timeline-item"><div class="tl-date">${esc(x.date)} · ${label}</div><b>${esc(x.title)}</b>${x.sub?`<div class="meta">${esc(x.sub)}</div>`:''}</div>`}).join('')||'<div class="empty">実装日のあるデータがありません。</div>';
-}
-$('#timelineType')?.addEventListener('change',renderTimeline);$('#timelineOrder')?.addEventListener('change',renderTimeline);
-
-function renderDashboard(){
-  $('#dashStories')&&($('#dashStories').textContent=stories.length);$('#dashCards')&&($('#dashCards').textContent=cards.length);$('#dashVoices')&&($('#dashVoices').textContent=voices.length);
-  const unsorted=screenshots.filter(x=>!x.story_id&&!x.story_title&&!x.story_name).length;$('#dashUnsorted')&&($('#dashUnsorted').textContent=unsorted);
-  const recent=[...cards.map(x=>({t:'カード',n:x.card_name,d:x.created_at||x.release_date||''})),...voices.map(x=>({t:'ボイス',n:x.voice_name,d:x.created_at||x.release_date||''})),...stories.map(x=>({t:'ストーリー',n:x.title,d:x.created_at||storyDate(x)||''}))].sort((a,b)=>(b.d||'').localeCompare(a.d||'')).slice(0,5);
-  $('#dashRecent')&&($('#dashRecent').innerHTML=recent.map(x=>`<div class="recent-item"><span class="tag">${x.t}</span> <b>${esc(x.n||'')}</b><div class="meta">${esc(String(x.d||'').slice(0,10))}</div></div>`).join('')||'<div class="empty">まだデータがありません。</div>');
-}
-$('#dashStorageRefresh')?.addEventListener('click',async()=>{const el=$('#dashStorage');try{el.textContent='計算中…';await requireUser();const x=await listStorageTree('private');el.textContent=`${x.count}枚 / ${fmtBytes(x.total)}`}catch(e){el.textContent='取得失敗'}});
-const _renderAllAD=renderAll;
-renderAll=function(){_renderAllAD();renderPeople();renderTimeline();renderDashboard()};
 
 </script>
 <style>
@@ -136,33 +75,6 @@ renderAll=function(){_renderAllAD();renderPeople();renderTimeline();renderDashbo
 .storage-total{font-size:25px;font-weight:800}
 @media(max-width:560px){.cardstill.before img{width:86px;max-height:120px}.cardstill.bloomed img{width:160px;max-height:210px}.status-grid{grid-template-columns:repeat(2,1fr)}.sort-select{width:100%}}
 
-
-/* A-D expansion */
-.view-toggle{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}
-.view-toggle .active{background:var(--plum);color:#fff;border-color:var(--plum)}
-.card-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
-.gallery-card{border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden;box-shadow:0 5px 18px rgba(56,32,65,.05)}
-.gallery-card button{all:unset;display:block;cursor:pointer;width:100%}
-.gallery-card img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;background:#f2edf4}
-.gallery-card .gallery-info{padding:10px}
-.gallery-card h4{margin:5px 0;font-size:14px;line-height:1.4}
-.gallery-card .meta{font-size:11px}
-.people-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}
-.person-card{padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff;text-align:left;cursor:pointer}
-.person-card b{display:block;font-size:15px}.person-card small{color:var(--muted)}
-.person-detail{margin-top:14px}
-.cross-section{margin-top:16px}.cross-section h4{margin-bottom:8px}
-.timeline{position:relative;margin:10px 0 0 9px;padding-left:24px;border-left:2px solid #d8c8da}
-.timeline-year{font-size:22px;font-weight:800;color:var(--plum);margin:22px 0 10px -14px;background:var(--paper);display:inline-block;padding:0 8px}
-.timeline-item{position:relative;margin:0 0 12px;padding:12px 14px;background:#fff;border:1px solid var(--line);border-radius:13px}
-.timeline-item:before{content:"";position:absolute;left:-31px;top:18px;width:10px;height:10px;border-radius:50%;background:#b65a91;border:3px solid var(--paper)}
-.timeline-item .tl-date{font-size:11px;color:var(--muted);margin-bottom:3px}
-.dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
-.dash-card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px}
-.dash-card .dash-num{font-size:28px;font-weight:800;color:var(--plum)}
-.recent-list{margin-top:9px}.recent-item{padding:9px 0;border-top:1px solid var(--line)}.recent-item:first-child{border-top:0}
-@media(max-width:560px){.card-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-
 </style></head>
 <body>
 <div id="authGate" class="auth-gate">
@@ -189,25 +101,15 @@ renderAll=function(){_renderAllAD();renderPeople();renderTimeline();renderDashbo
 <button class="nav" data-page="outfits"><span>◇</span>MV衣装</button>
 <button class="nav" data-page="events"><span>▦</span>イベント・コラボ</button>
 <button class="nav" data-page="screens"><span>▧</span>スクショ管理 <small id="navCount">0</small></button>
+<button class="nav" data-page="people"><span>◇</span>人物別</button>
+<button class="nav" data-page="timeline"><span>⌁</span>タイムライン</button>
 <button class="nav" data-page="settings"><span>⚙</span>データ・設定</button>
 <div class="aside-note">七種茨くんに関する記録を、出典と一緒に整理する個人向けアーカイブ。</div>
 </aside>
 <main class="main">
 <section id="page-home">
 <div class="hero"><div><div class="eyebrow">THE IBARA ARCHIVE</div><h2>七種 茨のことを、<br>まとめて探せる場所。</h2><p>ストーリー、カード、ボイス、MV衣装。<br>七種茨の情報を、出典と一緒に整理する個人アーカイブ。</p><div class="motifbar"><span class="motif"><i class="miniicon">S</i> archive</span><span class="motif"><i class="miniicon">DB</i> database</span><span class="motif"><i class="miniicon">C</i> break</span><span class="motif"><i class="miniicon">Q</i> search</span></div></div><div><div class="searchbox"><input id="heroQuery" placeholder="例：茨が凪砂に話していたこと"><button class="btn" id="heroSearch">検索</button></div></div></div>
-
-<div class="panel" id="homeDashboard" style="margin-top:18px">
-  <div class="sectionhead"><div><h3>アーカイブ状況</h3><p>いま登録されているデータと最近の追加。</p></div></div>
-  <div class="dashboard-grid">
-    <div class="dash-card"><span class="small">ストーリー</span><div class="dash-num" id="dashStories">0</div></div>
-    <div class="dash-card"><span class="small">カード</span><div class="dash-num" id="dashCards">0</div></div>
-    <div class="dash-card"><span class="small">ボイス</span><div class="dash-num" id="dashVoices">0</div></div>
-    <div class="dash-card"><span class="small">未整理スクショ</span><div class="dash-num" id="dashUnsorted">0</div></div>
-  </div>
-  <div style="margin-top:14px"><b>最近追加したもの</b><div id="dashRecent" class="recent-list"></div></div>
-  <div style="margin-top:12px"><button class="btn ghost" id="dashStorageRefresh">Storage容量を確認</button> <span class="small" id="dashStorage">未計算</span></div>
-</div>
-<div class="stats"><div class="stat"><label>登録スクショ</label><strong id="statImages">0</strong><small>Supabaseに保存</small></div><div class="stat"><label>テキスト記録</label><strong id="statTexts">0</strong><small>検索対象</small></div><div class="stat"><label>カード記録</label><strong id="statCards">0</strong><small>実装日・関連話</small></div><div class="stat"><label>未特定資料</label><strong id="statUnknown">0</strong><small>確認待ち</small></div></div>
+<div class="panel" id="homeDashboard" style="margin:18px 0"><div class="section-head"><div><h2>アーカイブ状況</h2><p>登録済みデータと最近追加したもの。</p></div></div><div class="dashboard-grid"><div class="dash-card"><span class="small">ストーリー</span><div class="dash-num" id="dashStories">0</div></div><div class="dash-card"><span class="small">カード</span><div class="dash-num" id="dashCards">0</div></div><div class="dash-card"><span class="small">ボイス</span><div class="dash-num" id="dashVoices">0</div></div><div class="dash-card"><span class="small">未整理スクショ</span><div class="dash-num" id="dashUnsorted">0</div></div></div><h3 style="margin-top:16px">最近追加したもの</h3><div id="dashRecent"></div><div style="margin-top:12px"><button class="btn ghost" id="dashStorageRefresh">Storage容量を確認</button> <span class="small" id="dashStorage">未計算</span></div></div><div class="stats"><div class="stat"><label>登録スクショ</label><strong id="statImages">0</strong><small>Supabaseに保存</small></div><div class="stat"><label>テキスト記録</label><strong id="statTexts">0</strong><small>検索対象</small></div><div class="stat"><label>カード記録</label><strong id="statCards">0</strong><small>実装日・関連話</small></div><div class="stat"><label>未特定資料</label><strong id="statUnknown">0</strong><small>確認待ち</small></div></div>
 <div class="section-head"><div><h2>アーカイブを探す</h2><p>キーワード、人物、セリフの断片から検索</p></div><button class="btn light" data-go="screens">＋ 資料を追加</button></div>
 <div class="cards">
 <div class="record"><span class="tag">SEARCH</span><h3>全文検索</h3><p>「誰が誰に何を言ったか」など、自然な文章で探す。OCRで読み取った文字、人物タグ、ストーリー名などから資料を探せます。</p><button class="btn ghost" data-go="search">検索画面へ →</button></div>
@@ -279,6 +181,8 @@ renderAll=function(){_renderAllAD();renderPeople();renderTimeline();renderDashbo
 <div style="margin-top:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn" id="ocrAll">未OCR画像を読み取る</button><button class="btn ghost" id="exportIndex">索引をバックアップ</button><button class="btn ghost" id="clearImages">画像記録を削除</button><span id="importStatus" class="small">準備完了</span></div><div class="progress" style="margin-top:12px"><div id="progressBar"></div></div><div id="ocrStatus" class="small" style="margin-top:7px"></div><div id="thumbs" class="thumbs"></div></div>
 <div class="section-head"><div><h2>今回の登録待ち</h2><p>内容を確認して「登録してアーカイブ」を押すと、この画面から登録済みアーカイブへ移動します。</p></div><span id="imageCount" class="pill">0件</span></div><div id="imageList"></div></section>
 <section id="page-screenarchive" class="hidden"><div class="section-head"><div><h2>登録済みスクショ</h2><p>これまで登録したスクショを確認・修正できます。</p></div><button class="btn" data-go="screens">＋ 新しいスクショを登録</button></div><div class="panel"><div class="filters"><input id="archiveFilter" placeholder="ストーリー名・話数・話者・本文・タグで検索"></div><div id="archiveCount" class="small" style="margin:10px 0"></div><div id="archiveList"></div></div></section>
+<section id="page-people" class="hidden"><div class="section-head"><div><h2>人物別</h2><p>人物から関連ストーリー・スクショ・ボイスを横断表示します。</p></div></div><div class="panel"><input id="personSearch" placeholder="人物名で検索"><div id="peopleList" class="people-grid" style="margin-top:12px"></div><div id="personDetail" style="margin-top:14px"></div></div></section>
+<section id="page-timeline" class="hidden"><div class="section-head"><div><h2>茨タイムライン</h2><p>カード・ストーリー・ボイスを実装時期順に確認できます。</p></div></div><div class="panel"><div class="filters"><select id="timelineType"><option value="">すべて</option><option value="card">カード</option><option value="story">ストーリー</option><option value="voice">ボイス</option></select><select id="timelineOrder"><option value="desc">新しい順</option><option value="asc">古い順</option></select></div><div id="timelineList" class="timeline"></div></div></section>
 <section id="page-settings" class="hidden"><div class="section-head"><div><h2>データ・設定</h2><p>データを端末内で管理し、必要に応じてバックアップ</p></div></div><div class="two"><div class="panel"><h3>検索について</h3><p class="small">OCRテキスト、人物・タグ、ストーリー名、カード情報を対象にしたキーワード検索です。</p><div class="field hidden"><input id="aiEndpoint"></div><button class="btn hidden" id="saveSettings">設定を保存</button><p class="small">検索語をスペースで区切ると、複数語を含む資料を絞り込めます。</p></div><div class="panel"><h3>バックアップ・復元</h3><p class="small">索引、OCRテキスト、カード記録をJSONでバックアップします。画像本体は含めず、Supabaseに保存されます。</p><button class="btn" id="backupAll">データをバックアップ</button><div class="field"><label>バックアップファイルを読み込む</label><input type="file" id="restoreFile" accept="application/json"></div><button class="btn ghost" id="restoreBtn">復元</button></div></div><div class="panel" style="margin-top:14px"><h3>画像ストレージ使用量</h3><p class="small">Supabase Storage「ibara-screenshots」に保存されている画像の容量を集計します。</p><div class="storage-total" id="storageTotal">未計算</div><div id="storageBreakdown" class="small">「容量を再計算」を押すと取得します。</div><div class="storage-meter"><div id="storageMeterBar"></div></div><button class="btn ghost" id="refreshStorageUsage">容量を再計算</button><span class="small" id="storageUsageStatus"></span></div><div class="panel" style="margin-top:14px"><h3>利用ガイドライン</h3><p class="small">Happy Elements公式の最新ガイドラインと『あんさんぶるスターズ！！』個別ガイドラインを必ず確認してください。ファン制作の非公式サイトであり、公式・公認ではありません。</p><p><a href="https://www.happyelements.co.jp/contents-guideline/" target="_blank" rel="noreferrer">Happy Elements コンテンツ利用ガイドライン ↗</a></p><p><a href="https://ensemble-stars-music.zendesk.com/hc/ja/articles/39158265271833" target="_blank" rel="noreferrer">ゲームの内容をSNS等で公開しても良いですか？ ↗</a></p></div></section>
 <div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true" aria-label="カードスチル拡大表示"><button id="closeLightbox" class="lightbox-close" aria-label="閉じる">×</button><img id="lightboxImage" alt="拡大カードスチル"><div id="lightboxCaption" class="lightbox-caption"></div></div><div class="footer">当サイトはファンが個人で制作する非公式アーカイブであり、Happy Elements株式会社および『あんさんぶるスターズ！！』公式とは一切関係ありません。<br>当ページは、Happy Elements株式会社「あんさんぶるスターズ！！」の画像を利用しております。該当画像の転載・配布等は禁止しております。 ©Happy Elements K.K</div>
 </main></div></div>
@@ -292,7 +196,7 @@ let images=[],cards=[],stories=[],voices=[]; const selectedImages=new Set();
 const esc=(s='')=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function requireUser(){const {data:{user}}=await sb.auth.getUser();if(!user)throw new Error('先にログインしてください。');return user}
 async function refreshAuth(){const {data:{user}}=await sb.auth.getUser();return user}
-function go(page){$$('main section').forEach(s=>s.classList.add('hidden'));$('#page-'+page)?.classList.remove('hidden');$$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='home')renderHome();if(page==='screens')renderImages();if(page==='screenarchive')renderArchive();if(page==='cards')renderCards();if(page==='voices')renderVoices();if(page==='outfits')renderOutfits();if(page==='stories')renderStories();if(page==='events')renderEvents();scrollTo({top:0,behavior:'smooth'})}
+function go(page){$$('main section').forEach(s=>s.classList.add('hidden'));$('#page-'+page)?.classList.remove('hidden');$$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='home')renderHome();if(page==='screens')renderImages();if(page==='screenarchive')renderArchive();if(page==='cards')renderCards();if(page==='voices')renderVoices();if(page==='outfits')renderOutfits();if(page==='stories')renderStories();if(page==='events')renderEvents();if(page==='people')renderPeople();if(page==='timeline')renderTimeline();scrollTo({top:0,behavior:'smooth'})}
 $$('[data-page]').forEach(b=>b.onclick=()=>go(b.dataset.page));$$('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
 function addTagString(a,b){return [...new Set([...(a||'').split(/[、,]/),...(b||'').split(/[、,]/)].map(x=>x.trim()).filter(Boolean))].join('、')}
 function cleanOCR(s){return (s||'').replace(/[|｜]/g,' ').replace(/\s+/g,' ').replace(/^[^\p{L}\p{N}「『（【]+/u,'').trim()}
@@ -333,7 +237,7 @@ function cardGame(c){return c.game==='both'?'Basic / Music':c.game==='basic'?'Ba
 function specialty(m){const a=[['Da',+m.da||0],['Vo',+m.vo||0],['Pf',+m.pf||0]].sort((x,y)=>y[1]-x[1]);return a[0][1]?(a[0][1]===a[1][1]?'バランス':a[0][0]):''}
 function cardEra(c){return (c.tags||[]).includes('世代:!')?'single':'double'}
 function nval(v){const n=Number(v);return Number.isFinite(n)?n:-Infinity}
-function statusGrid(label,x,kind){if(!x?.card_id)return'';return `<div class="statusbox ${kind}"><div class="status-title">${label}</div><div class="status-grid"><div class="status-cell total"><small>総合</small><strong>${x.total??'-'}</strong></div><div class="status-cell"><small>Da</small><strong>${x.da??'-'}</strong></div><div class="status-cell"><small>Vo</small><strong>${x.vo??'-'}</strong></div><div class="status-cell"><small>Pf</small><strong>${x.pf??'-'}</strong></div></div></div>`}
+function statusGrid(label,x,kind){if(!x?.card_id)return'';const vals={da:Number(x.da)||0,vo:Number(x.vo)||0,pf:Number(x.pf)||0},mx=Math.max(vals.da,vals.vo,vals.pf);const top=k=>vals[k]===mx&&mx>0?' top-stat':'';return `<div class="statusbox ${kind}"><div class="status-title">${label}</div><div class="status-grid"><div class="status-cell total"><small>総合</small><strong>${x.total??'-'}</strong></div><div class="status-cell da${top('da')}"><small>Da</small><strong>${x.da??'-'}</strong></div><div class="status-cell vo${top('vo')}"><small>Vo</small><strong>${x.vo??'-'}</strong></div><div class="status-cell pf${top('pf')}"><small>Pf</small><strong>${x.pf??'-'}</strong></div></div></div>`}
 function renderCards(){const years=[...new Set(cards.map(c=>(c.release_date||'').slice(0,4)).filter(Boolean))].sort().reverse(),keep=$('#cardYear').value;$('#cardYear').innerHTML='<option value="">実装年：すべて</option>'+years.map(y=>`<option>${y}</option>`).join('');$('#cardYear').value=keep;const q=$('#cardFilter').value.toLowerCase(),yr=$('#cardYear').value,own=$('#cardOwnedFilter').value,era=$('#cardEraFilter').value,impl=$('#cardImplFilter').value,rar=$('#cardRarityFilter').value,ba=$('#cardBasicAttrFilter').value,ma=$('#cardMusicAttrFilter').value,feat=$('#cardFeatureFilter').value,src=$('#cardSourceFilter').value,sort=$('#cardSort')?.value||'date_desc';let list=cards.filter(c=>(!q||matchText({...c,...c.music,...c.basic},q))&&(!yr||(c.release_date||'').startsWith(yr))&&(!own||(own==='owned'?!!c.owned:!c.owned))&&(!era||cardEra(c)===era)&&(!impl||c.game===impl)&&(!rar||String(c.rarity)===rar)&&(!ba||c.basicClass===ba)&&(!ma||c.attribute===ma)&&(!src||c.acquisition_type===src)&&(!feat||(feat==='mv'&&c.music?.mv_outfit_name)||(feat==='spp'&&c.music?.spp_song)||(feat==='both'&&c.music?.mv_outfit_name&&c.music?.spp_song)));
 const sorters={date_desc:(a,b)=>(b.release_date||'').localeCompare(a.release_date||''),date_asc:(a,b)=>(a.release_date||'').localeCompare(b.release_date||''),rarity_desc:(a,b)=>nval(b.rarity)-nval(a.rarity),rarity_asc:(a,b)=>nval(a.rarity)-nval(b.rarity),basic_total_desc:(a,b)=>nval(b.basic?.total)-nval(a.basic?.total),basic_da_desc:(a,b)=>nval(b.basic?.da)-nval(a.basic?.da),basic_vo_desc:(a,b)=>nval(b.basic?.vo)-nval(a.basic?.vo),basic_pf_desc:(a,b)=>nval(b.basic?.pf)-nval(a.basic?.pf),music_total_desc:(a,b)=>nval(b.music?.total)-nval(a.music?.total),music_da_desc:(a,b)=>nval(b.music?.da)-nval(a.music?.da),music_vo_desc:(a,b)=>nval(b.music?.vo)-nval(a.music?.vo),music_pf_desc:(a,b)=>nval(b.music?.pf)-nval(a.music?.pf)};list.sort(sorters[sort]||sorters.date_desc);
 $('#cardList').innerHTML=list.map(c=>{const before=c.images.find(im=>im.image_type!=='bloomed'),bloom=c.images.find(im=>im.image_type==='bloomed');const still=(im,cls,label)=>im?`<button class="cardstill ${cls}" data-lightbox="${esc(im.url)}" data-caption="${esc(c.card_name)}・${label}"><img src="${esc(im.url)}" alt="${esc(c.card_name)} ${label}"><span class="small">${label}</span></button>`:'';const eraLabel=cardEra(c)==='single'?'！旧カード':'！！カード';const b=c.basic||{},m=c.music||{};return `<article class="record" style="margin:10px 0"><div class="card-visuals">${still(bloom,'bloomed','開花後')}${still(before,'before','開花前')}</div><div><span class="tag">${eraLabel}</span> <span class="tag">${esc(cardGame(c))}</span> <span class="tag">★${esc(c.rarity||'')}</span><h3>${esc(c.card_name)}</h3><p><b>実装：</b>${esc(c.release_date||'未設定')}　<b>登場：</b>${esc(c.event_or_scout_name||c.acquisition_type||'未設定')}</p>
@@ -384,4 +288,26 @@ $('#gateLoginBtn').onclick=gateLogin;$('#gatePassword').addEventListener('keydow
 $('#logoutBtn').onclick=async()=>{await sb.auth.signOut();images=[];cards=[];stories=[];voices=[];showPrivateSite(null);$('#gatePassword').value='';$('#gateError').textContent='';};
 sb.auth.onAuthStateChange((_event,session)=>{if(!session?.user)showPrivateSite(null)});
 (async()=>{await enterPrivateSite()})();
+
+// A-D stable implementation
+let cardViewMode='detail';
+const originalRenderCards=renderCards;
+function currentFilteredCards(){const q=$('#cardFilter').value.toLowerCase(),yr=$('#cardYear').value,own=$('#cardOwnedFilter').value,era=$('#cardEraFilter').value,impl=$('#cardImplFilter').value,rar=$('#cardRarityFilter').value,ba=$('#cardBasicAttrFilter').value,ma=$('#cardMusicAttrFilter').value,feat=$('#cardFeatureFilter').value,src=$('#cardSourceFilter').value,sort=$('#cardSort')?.value||'date_desc';let list=cards.filter(c=>(!q||matchText({...c,...c.music,...c.basic},q))&&(!yr||(c.release_date||'').startsWith(yr))&&(!own||(own==='owned'?!!c.owned:!c.owned))&&(!era||cardEra(c)===era)&&(!impl||c.game===impl)&&(!rar||String(c.rarity)===rar)&&(!ba||c.basicClass===ba)&&(!ma||c.attribute===ma)&&(!src||c.acquisition_type===src)&&(!feat||(feat==='mv'&&c.music?.mv_outfit_name)||(feat==='spp'&&c.music?.spp_song)||(feat==='both'&&c.music?.mv_outfit_name&&c.music?.spp_song)));const n=v=>Number(v)||-Infinity;const sm={date_desc:(a,b)=>(b.release_date||'').localeCompare(a.release_date||''),date_asc:(a,b)=>(a.release_date||'').localeCompare(b.release_date||''),rarity_desc:(a,b)=>n(b.rarity)-n(a.rarity),rarity_asc:(a,b)=>n(a.rarity)-n(b.rarity),basic_total_desc:(a,b)=>n(b.basic?.total)-n(a.basic?.total),basic_da_desc:(a,b)=>n(b.basic?.da)-n(a.basic?.da),basic_vo_desc:(a,b)=>n(b.basic?.vo)-n(a.basic?.vo),basic_pf_desc:(a,b)=>n(b.basic?.pf)-n(a.basic?.pf),music_total_desc:(a,b)=>n(b.music?.total)-n(a.music?.total),music_da_desc:(a,b)=>n(b.music?.da)-n(a.music?.da),music_vo_desc:(a,b)=>n(b.music?.vo)-n(a.music?.vo),music_pf_desc:(a,b)=>n(b.music?.pf)-n(a.music?.pf)};return list.sort(sm[sort]||sm.date_desc)}
+function renderCardGallery(){const list=currentFilteredCards();$('#cardList').innerHTML=`<div class="card-gallery">${list.map(c=>{const bloom=(c.images||[]).find(i=>i.image_type==='bloomed'),before=(c.images||[]).find(i=>i.image_type!=='bloomed'),im=bloom||before;return `<article class="gallery-card"><button ${im?`data-lightbox="${esc(im.url)}" data-caption="${esc(c.card_name)}"`:''}>${im?`<img src="${esc(im.url)}" alt="${esc(c.card_name)}">`:`<div style="aspect-ratio:3/4;display:grid;place-items:center;background:#f3eef5">画像なし</div>`}<div class="gallery-info"><span class="tag">★${esc(c.rarity||'')}</span> <span class="tag">${esc(cardGame(c))}</span><h4>${esc(c.card_name)}</h4><div class="meta">${esc(c.release_date||'実装日未設定')}</div></div></button></article>`}).join('')}</div>`;$$('[data-lightbox]').forEach(b=>b.onclick=()=>openLightbox(b.dataset.lightbox,b.dataset.caption))}
+renderCards=function(){originalRenderCards();$('#cardViewDetail')?.classList.toggle('active',cardViewMode==='detail');$('#cardViewGallery')?.classList.toggle('active',cardViewMode==='gallery');if(cardViewMode==='gallery')renderCardGallery()};
+$('#cardViewDetail').onclick=()=>{cardViewMode='detail';renderCards()};$('#cardViewGallery').onclick=()=>{cardViewMode='gallery';renderCards()};
+
+function personNames(){const set=new Set(),add=v=>{String(v||'').split(/[、,]/).map(x=>x.trim()).filter(Boolean).forEach(x=>{if(x!=='七種 茨'&&x!=='七種茨'&&!/^(春|夏|秋|冬|朝|昼|夕|夜|季節|時間|その他|記念日|キャンペーン)$/.test(x))set.add(x)})};stories.forEach(x=>(x.tags||[]).forEach(add));images.forEach(x=>{add(x.tags);if(x.speaker&&x.speaker!=='七種 茨'&&x.speaker!=='七種茨')add(x.speaker)});return [...set].sort((a,b)=>a.localeCompare(b,'ja'))}
+function renderPeople(){const q=$('#personSearch')?.value.trim()||'',names=personNames().filter(n=>!q||n.includes(q));$('#peopleList').innerHTML=names.map(n=>{const st=stories.filter(x=>(x.tags||[]).some(t=>String(t).includes(n))),im=images.filter(x=>String(x.tags||'').includes(n)||String(x.speaker||'').includes(n)),vc=voices.filter(x=>matchText(x,n));return `<button class="person-card" data-person="${esc(n)}"><b>${esc(n)}</b><small>ストーリー ${st.length} / スクショ ${im.length} / ボイス ${vc.length}</small></button>`}).join('')||'<div class="empty">人物タグまたは話者情報がまだありません。</div>';$$('[data-person]').forEach(b=>b.onclick=()=>showPerson(b.dataset.person))}
+function showPerson(n){const st=stories.filter(x=>(x.tags||[]).some(t=>String(t).includes(n))),im=images.filter(x=>String(x.tags||'').includes(n)||String(x.speaker||'').includes(n)),vc=voices.filter(x=>matchText(x,n));$('#personDetail').innerHTML=`<div class="panel"><h3>${esc(n)}</h3><h4>関連ストーリー</h4>${st.map(x=>`<div class="resultrow"><b>${esc(x.title)}</b><div class="meta">${esc(x.episode||'話数未設定')}</div></div>`).join('')||'<div class="empty">なし</div>'}<h4>関連スクショ</h4><div class="meta">${im.length}件</div><h4>関連ボイス</h4>${vc.map(x=>`<div class="resultrow"><b>${esc(x.voice_name)}</b><p>${esc(x.voice_text||'')}</p></div>`).join('')||'<div class="empty">なし</div>'}</div>`}
+$('#personSearch').addEventListener('input',renderPeople);
+function renderTimeline(){const type=$('#timelineType').value,ord=$('#timelineOrder').value,a=[];cards.forEach(x=>x.release_date&&a.push({type:'card',date:x.release_date,title:x.card_name,sub:x.event_or_scout_name||''}));stories.forEach(x=>{const d=storyDate(x);if(d)a.push({type:'story',date:String(d).slice(0,10),title:x.title,sub:x.episode||''})});voices.forEach(x=>x.release_date&&a.push({type:'voice',date:x.release_date,title:x.voice_name,sub:x.category||''}));const z=a.filter(x=>!type||x.type===type).sort((x,y)=>ord==='asc'?x.date.localeCompare(y.date):y.date.localeCompare(x.date));let last='';$('#timelineList').innerHTML=z.map(x=>{const y=x.date.slice(0,4),h=y!==last?`<div class="timeline-year">${last=y}</div>`:'';return `${h}<div class="timeline-item"><div class="meta">${esc(x.date)} · ${{card:'カード',story:'ストーリー',voice:'ボイス'}[x.type]}</div><b>${esc(x.title)}</b><div class="meta">${esc(x.sub)}</div></div>`}).join('')||'<div class="empty">実装日のあるデータがありません。</div>'}
+$('#timelineType').addEventListener('change',renderTimeline);$('#timelineOrder').addEventListener('change',renderTimeline);
+function renderDashboard(){if(!$('#dashStories'))return;$('#dashStories').textContent=stories.length;$('#dashCards').textContent=cards.length;$('#dashVoices').textContent=voices.length;$('#dashUnsorted').textContent=images.filter(x=>!x.story_id).length;const r=[...cards.map(x=>({t:'カード',n:x.card_name,d:x.created_at||x.release_date||''})),...voices.map(x=>({t:'ボイス',n:x.voice_name,d:x.created_at||x.release_date||''})),...stories.map(x=>({t:'ストーリー',n:x.title,d:x.created_at||storyDate(x)||''}))].sort((a,b)=>(b.d||'').localeCompare(a.d||'')).slice(0,5);$('#dashRecent').innerHTML=r.map(x=>`<div class="recent-item"><span class="tag">${x.t}</span> <b>${esc(x.n||'')}</b><div class="meta">${esc(String(x.d||'').slice(0,10))}</div></div>`).join('')||'<div class="empty">まだありません。</div>'}
+const originalRenderHomeAD=renderHome;renderHome=function(){originalRenderHomeAD();renderDashboard()};
+async function robustStorageUsage(){try{return await listStorageTree('private')}catch(e){let total=0,count=0,storyBytes=0,cardBytes=0,storyCount=0,cardCount=0;const rows=[...images.map(x=>({url:x.url,card:false})),...cards.flatMap(c=>(c.images||[]).map(x=>({url:x.url,card:true})))];for(const x of rows){if(!x.url)continue;count++;if(x.card)cardCount++;else storyCount++;try{const r=await fetch(x.url,{method:'HEAD'}),n=Number(r.headers.get('content-length')||0);total+=n;if(x.card)cardBytes+=n;else storyBytes+=n}catch(_){}}return{total,count,storyBytes,cardBytes,storyCount,cardCount}}}
+async function refreshStorageUsageAD(target){const el=target||$('#storageUsageStatus');try{if(el)el.textContent=' 集計中…';await requireUser();const x=await robustStorageUsage();if($('#storageTotal'))$('#storageTotal').textContent=fmtBytes(x.total);if($('#storageBreakdown'))$('#storageBreakdown').innerHTML=`ストーリー等：${x.storyCount}枚・${fmtBytes(x.storyBytes)}<br>カードスチル：${x.cardCount}枚・${fmtBytes(x.cardBytes)}<br>合計：${x.count}枚・${fmtBytes(x.total)}`;if($('#dashStorage'))$('#dashStorage').textContent=`${x.count}枚 / ${fmtBytes(x.total)}`;if(el)el.textContent=' 最終計算 '+new Date().toLocaleString('ja-JP')}catch(e){if(el)el.textContent=' 取得できませんでした：'+e.message}}
+$('#refreshStorageUsage').onclick=()=>refreshStorageUsageAD($('#storageUsageStatus'));$('#dashStorageRefresh').onclick=()=>refreshStorageUsageAD($('#dashStorage'));
+const originalEnterPrivateSiteAD=enterPrivateSite;enterPrivateSite=async function(){await originalEnterPrivateSiteAD();const {data:{user}}=await sb.auth.getUser();if(user){renderDashboard();renderPeople();renderTimeline()}};
+
 </script></body></html>
