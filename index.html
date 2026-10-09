@@ -18,6 +18,12 @@
 .lightbox{position:fixed;inset:0;background:rgba(20,14,28,.9);z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px}.lightbox img{max-width:min(94vw,900px);max-height:86vh;object-fit:contain;border-radius:12px;box-shadow:0 18px 70px #000}.lightbox-close{position:fixed;right:18px;top:18px;width:44px;height:44px;border:1px solid rgba(255,255,255,.35);border-radius:50%;background:rgba(255,255,255,.12);color:#fff;font-size:28px}.lightbox-caption{position:fixed;bottom:18px;left:18px;right:18px;text-align:center;color:#fff;font-size:13px}
 @media(max-width:560px){.cardgame-title small{display:none}.helperbox span{font-size:10px}.cardstill img{width:92px;max-height:130px}}
 .game-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}.game-tab{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:11px;padding:12px;font-weight:750}.game-tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}.implementation-box{padding:13px;border:1px solid var(--line);border-radius:12px;background:#fbf8fc;margin:12px 0}.implementation-options{display:flex;gap:14px;flex-wrap:wrap}.implementation-options label{display:flex;align-items:center;gap:7px;font-weight:700}.implementation-options input{width:18px;height:18px}.filter-group{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:8px;margin:14px 0}.filter-group input,.filter-group select{width:100%;border:1px solid var(--line);background:#fff;border-radius:9px;padding:10px;color:var(--ink)}@media(max-width:760px){.filter-group{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Site-wide Supabase Auth gate */
+.auth-gate{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 80% 15%,#704363 0,transparent 32%),linear-gradient(145deg,#1f182d,#3d2940 62%,#6b3a62);color:#fff}
+.auth-card{width:min(100%,430px);background:rgba(255,255,255,.97);color:var(--ink);border-radius:20px;padding:26px;box-shadow:0 24px 70px rgba(0,0,0,.28)}
+.auth-mark{width:52px;height:52px;display:grid;place-items:center;border-radius:15px;margin-bottom:16px;background:linear-gradient(145deg,#bd4f88,#7b3d72);color:#fff;font:700 14px/1 Georgia,serif;letter-spacing:.08em}
+.auth-card h1{font-family:Georgia,serif;font-size:27px;margin:0 0 4px}.auth-card>p{margin:0 0 18px;color:var(--muted);font-size:13px}.auth-card .field{margin:11px 0}.auth-card .btn{width:100%;margin-top:6px}.auth-error{min-height:1.6em;margin:9px 0 0;color:#9b2f55;font-size:12px}.auth-note{margin-top:14px!important;font-size:11px!important;color:var(--muted)!important;text-align:center}.site-locked{display:none!important}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--mint:#b8d8cb;--mint2:#eaf5f0}
@@ -29,7 +35,20 @@
 .panel h3:before{content:"⌁ ";color:#7fae9b}.terminal-note{background:#282038;color:#dff4e9;border-radius:10px;padding:10px 12px;font:12px/1.6 ui-monospace,monospace;margin-top:10px}.terminal-note:before{content:"> archive.search ";color:#f0a9cf}
 @media(max-width:560px){.hero:after{font-size:18px;right:7px}.motifbar{padding-right:30px}}
 </style></head>
-<body><div class="shell">
+<body>
+<div id="authGate" class="auth-gate">
+  <div class="auth-card">
+    <div class="auth-mark">IB</div>
+    <h1>Ibara Archive</h1>
+    <p>このアーカイブは非公開です。登録済みのアカウントでログインしてください。</p>
+    <div class="field"><label>メールアドレス</label><input id="gateEmail" type="email" autocomplete="username"></div>
+    <div class="field"><label>パスワード</label><input id="gatePassword" type="password" autocomplete="current-password"></div>
+    <button class="btn" id="gateLoginBtn">ログイン</button>
+    <div id="gateError" class="auth-error"></div>
+    <p class="auth-note">新規登録機能はありません。</p>
+  </div>
+</div>
+<div id="siteShell" class="shell site-locked">
 <header class="top"><div class="brand"><div class="rose" aria-hidden="true">IB</div><div><h1>Ibara Archive</h1><p>SAEGUSA IBARA · FAN KNOWLEDGE BASE</p></div></div><span class="pill" style="background:#4d354f;color:#f7d8ed">UNOFFICIAL FAN SITE</span></header>
 <div class="layout">
 <aside id="nav">
@@ -198,6 +217,12 @@ function score(o,q){const words=q.toLowerCase().split(/\s+/).filter(Boolean),all
 async function runSearch(){const q=$('#semanticQuery').value.trim();if(!q)return;let rows=[];images.forEach(x=>{if(matchText(x,q))rows.push({title:x.story||x.name,desc:[x.speaker,x.body].filter(Boolean).join('：'),meta:'スクショ',score:score(x,q)})});stories.forEach(x=>{if(matchText(x,q))rows.push({title:x.title,desc:x.episode||'',meta:'ストーリー',score:score(x,q)})});cards.forEach(x=>{if(matchText({...x,...x.music,...x.basic},q))rows.push({title:x.card_name,desc:x.event_or_scout_name||'',meta:'カード',score:score(x,q)})});voices.forEach(x=>{if(matchText(x,q))rows.push({title:x.voice_name,desc:x.voice_text||'',meta:'ボイス',score:score(x,q)})});rows.sort((a,b)=>b.score-a.score);$('#searchResults').innerHTML=rows.map(x=>`<div class="resultrow"><span class="score">一致度 ${Math.round(x.score*100)}%</span><b>${esc(x.title)}</b><p>${esc(x.desc)}</p><div class="meta">${x.meta}</div></div>`).join('')||'<div class="empty">一致する資料がありません。</div>'}
 $('#heroSearch').onclick=()=>{$('#semanticQuery').value=$('#heroQuery').value;go('search');runSearch()};$('#runSearch').onclick=runSearch;$('#storyFilter').oninput=renderStories;$('#storyType').onchange=renderStories;['cardFilter','cardEraFilter','cardImplFilter','cardRarityFilter','cardBasicAttrFilter','cardMusicAttrFilter','cardYear','cardOwnedFilter','cardFeatureFilter','cardSourceFilter'].forEach(id=>$('#'+id).addEventListener(id==='cardFilter'?'input':'change',renderCards));['voiceFilter','voiceCategoryFilter','voiceTagFilter'].forEach(id=>$('#'+id).addEventListener(id==='voiceFilter'?'input':'change',renderVoices));$('#outfitFilter').addEventListener('input',renderOutfits);
 function download(name,data){const b=new Blob([data],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),500)}$('#exportIndex').onclick=()=>download('ibara-index.json',JSON.stringify({stories,images:images.map(({url,...x})=>x)},null,2));$('#backupAll').onclick=()=>download('ibara-archive-backup.json',JSON.stringify({stories,cards,voices,images:images.map(({url,...x})=>x)},null,2));
-$('#loginBtn').onclick=async()=>{const {error}=await sb.auth.signInWithPassword({email:$('#loginEmail').value.trim(),password:$('#loginPassword').value});if(error)return alert('ログインできませんでした：'+error.message);await loadCloud();renderHome();renderImages()};$('#logoutBtn').onclick=async()=>{await sb.auth.signOut();images=[];cards=[];stories=[];voices=[];refreshAuth();renderHome()};
-(async()=>{try{await loadCloud();renderHome()}catch(e){console.error(e);renderHome()}})();
+function showPrivateSite(user){const gate=$('#authGate'),shell=$('#siteShell');if(user){gate.classList.add('hidden');shell.classList.remove('site-locked')}else{shell.classList.add('site-locked');gate.classList.remove('hidden')}}
+async function enterPrivateSite(){const {data:{user}}=await sb.auth.getUser();showPrivateSite(user);if(!user)return;try{await loadCloud();renderHome();renderImages();renderCards();renderVoices()}catch(e){console.error(e);renderHome()}}
+async function gateLogin(){const email=$('#gateEmail').value.trim(),password=$('#gatePassword').value,err=$('#gateError');err.textContent='';if(!email||!password){err.textContent='メールアドレスとパスワードを入力してください。';return}$('#gateLoginBtn').disabled=true;const {error}=await sb.auth.signInWithPassword({email,password});$('#gateLoginBtn').disabled=false;if(error){err.textContent='ログインできませんでした。メールアドレスとパスワードを確認してください。';return}await enterPrivateSite()}
+$('#gateLoginBtn').onclick=gateLogin;$('#gatePassword').addEventListener('keydown',e=>{if(e.key==='Enter')gateLogin()});
+$('#loginBtn').onclick=async()=>{const {error}=await sb.auth.signInWithPassword({email:$('#loginEmail').value.trim(),password:$('#loginPassword').value});if(error)return alert('ログインできませんでした：'+error.message);await enterPrivateSite()};
+$('#logoutBtn').onclick=async()=>{await sb.auth.signOut();images=[];cards=[];stories=[];voices=[];showPrivateSite(null);$('#gatePassword').value='';$('#gateError').textContent='';};
+sb.auth.onAuthStateChange((_event,session)=>{if(!session?.user)showPrivateSite(null)});
+(async()=>{await enterPrivateSite()})();
 </script></body></html>
