@@ -46,7 +46,36 @@
 <section id="page-search" class="hidden"><div class="section-head"><div><h2>全文検索</h2><p>覚えている単語・名前・セリフの一部から探す</p></div></div>
 <div class="panel"><div class="field"><label>検索キーワード</label><textarea id="semanticQuery" rows="3" placeholder="例：閣下 茨 ／ コズプロ 殿下 ／ 覚えているセリフの一部"></textarea></div><div class="filters"><select id="searchScope"><option value="all">すべての資料</option><option value="image">スクショOCR</option><option value="story">ストーリー索引</option><option value="card">カード</option></select><button class="btn" id="runSearch">検索する</button></div><div class="chips"><button class="chip sample2">茨 閣下</button><button class="chip sample2">カード名 イベント名</button><button class="chip sample2">覚えているセリフ</button></div><div class="terminal-note">覚えている単語 → OCR・タグ・タイトルから候補を検索</div><div id="searchNotice" class="notice" style="margin-top:14px">OCRテキスト・人物タグ・ストーリー名・カード情報をキーワード検索します。固有名詞やセリフの一部を入れるのがおすすめです。</div><div id="searchResults" style="margin-top:12px"></div></div></section>
 <section id="page-stories" class="hidden"><div class="section-head"><div><h2>ストーリー索引</h2><p>出典・話数・短い要約を記録。本文アーカイブにはしない設計。</p></div><button class="btn" data-go="screens">資料を登録</button></div><div class="panel"><div class="filters"><input id="storyFilter" placeholder="タイトル・人物・タグで絞り込み"><select id="storyType"><option value="">すべての種類</option><option>メインストーリー</option><option>イベントストーリー</option><option>スカウトストーリー</option><option>カードストーリー</option><option>その他</option></select></div><div id="storyList"></div></div></section>
-<section id="page-cards" class="hidden"><div class="section-head"><div><h2>カード・実装履歴</h2><p>カード実装日から、イベント・スカウト・関連ストーリーを逆引き。</p></div><button class="btn" id="newCardBtn">＋ カードを登録</button></div><div class="panel" id="cardForm" hidden><h3>カード情報</h3><div class="two"><div class="field"><label>カード名</label><input id="cName" placeholder="カード名"></div><div class="field"><label>実装日</label><input id="cDate" type="date"></div><div class="field"><label>レアリティ</label><select id="cRarity"><option>★3</option><option>★4</option><option>★5</option><option>その他</option></select></div><div class="field"><label>実装イベント・スカウト</label><input id="cEvent" placeholder="イベント・スカウト名"></div></div><div class="field"><label>関連ストーリー名・話数（複数可、短い出典メモ）</label><textarea id="cStories" rows="2" placeholder="ストーリー名／話数／関連人物"></textarea></div><div class="field"><label>メモ・出典URL</label><input id="cSource" placeholder="公式お知らせURLなど"></div><button class="btn" id="saveCard">カードを保存</button> <button class="btn ghost" id="cancelCard">キャンセル</button></div><div class="filters" style="margin:14px 0"><input id="cardFilter" placeholder="カード名・イベント・ストーリーで検索"><select id="cardYear"><option value="">全年度</option></select></div><div id="cardList"></div></section>
+<section id="page-cards" class="hidden">
+<div class="section-head"><div><h2>カード管理</h2><p>カード画像・実装情報・ステータス・衣装・SPP・スキルまでまとめて管理。</p></div><button class="btn" id="newCardBtn">＋ カードを登録</button></div>
+<div class="panel" id="cardForm" hidden><h3>カード情報</h3>
+<div class="two">
+<div class="field"><label>カード名</label><input id="cName" placeholder="カード名"></div>
+<div class="field"><label>実装日</label><input id="cDate" type="date"></div>
+<div class="field"><label>レアリティ</label><select id="cRarity"><option>★3</option><option>★4</option><option>★5</option><option>その他</option></select></div>
+<div class="field"><label>属性</label><select id="cAttribute"><option value="">未登録</option><option>Sparkle</option><option>Brilliant</option><option>Glitter</option><option>Flash</option></select></div>
+<div class="field"><label>登場区分</label><select id="cType"><option>イベント報酬</option><option>スカウト</option><option>その他</option></select></div>
+<div class="field"><label>イベント／スカウト名</label><input id="cEvent" placeholder="企画名"></div>
+<div class="field"><label>Da</label><input id="cDa" inputmode="numeric" placeholder="0"></div>
+<div class="field"><label>Vo</label><input id="cVo" inputmode="numeric" placeholder="0"></div>
+<div class="field"><label>Pf</label><input id="cPf" inputmode="numeric" placeholder="0"></div>
+<div class="field"><label>ステータス特化</label><select id="cSpecialty"><option value="">自動/未登録</option><option>Da</option><option>Vo</option><option>Pf</option><option>バランス</option></select></div>
+<div class="field"><label>MV衣装</label><input id="cMv" placeholder="なし／衣装名"></div>
+<div class="field"><label>SPP</label><input id="cSpp" placeholder="なし／楽曲名"></div>
+<div class="field"><label>センタースキル</label><input id="cCenterSkill" placeholder="スキル名・効果"></div>
+<div class="field"><label>ライブ／サポートスキル</label><input id="cSkill" placeholder="スキル名・効果"></div>
+<div class="field"><label>所持状況</label><select id="cOwned"><option>未所持</option><option>所持</option><option>完凸</option></select></div>
+<div class="field"><label>所持枚数</label><input id="cCopies" inputmode="numeric" type="number" min="0" placeholder="0"></div>
+<div class="field"><label>限界突破</label><select id="cLimit"><option value="0">0凸</option><option value="1">1凸</option><option value="2">2凸</option><option value="3">3凸</option><option value="4">4凸（完凸）</option></select></div>
+<div class="field"><label>開花前画像</label><input id="cImage" type="file" accept="image/*"></div>
+<div class="field"><label>開花後画像</label><input id="cBloomImage" type="file" accept="image/*"></div>
+</div>
+<div class="field"><label>関連ストーリー・話数</label><textarea id="cStories" rows="2" placeholder="ストーリー名／話数／関連人物"></textarea></div>
+<div class="field"><label>メモ・出典URL</label><input id="cSource" placeholder="公式お知らせURLなど"></div>
+<button class="btn ghost" id="ocrCardDetail">カード画像から文字を入力補助</button> <span class="small" id="cardOcrStatus"></span><br><br><button class="btn" id="saveCard">カードを保存</button> <button class="btn ghost" id="cancelCard">キャンセル</button>
+</div>
+<div class="filters" style="margin:14px 0"><input id="cardFilter" placeholder="カード名・イベント・衣装・SPP・スキルで検索"><select id="cardYear"><option value="">全年度</option></select><select id="cardOwnedFilter"><option value="">所持状況すべて</option><option>所持</option><option>未所持</option><option>完凸</option></select><select id="cardFeatureFilter"><option value="">機能すべて</option><option value="mv">MV衣装あり</option><option value="spp">SPPあり</option><option value="both">MV衣装＋SPPあり</option></select><select id="cardAttrFilter"><option value="">属性すべて</option><option>Sparkle</option><option>Brilliant</option><option>Glitter</option><option>Flash</option></select><select id="cardSpecialtyFilter"><option value="">特化すべて</option><option>Da</option><option>Vo</option><option>Pf</option><option>バランス</option></select></div>
+<div class="notice"><b>カード管理のおすすめ：</b>所持／未所持、完凸、属性、特化、MV衣装、SPPまで登録すると、あとから「未所持★5」「Pf特化」「MV衣装あり」などの一覧を作りやすくなります。</div><div id="cardList"></div></section>
 <section id="page-events" class="hidden"><div class="section-head"><div><h2>イベント・外部コラボ</h2><p>開催期間・企画名・登場内容・公式出典をまとめる</p></div><button class="btn" data-go="screens">関連資料を登録</button></div><div class="panel"><p class="small">イベント・コラボの記録は、資料登録フォームで種類を選択して追加できます。</p><div id="eventList"></div></div></section>
 <section id="page-screens" class="hidden"><div class="section-head"><div><h2>スクショ一括取り込み</h2><p>100枚以上を想定。ログイン後、画像はSupabase Storageに保存します。</p></div><span class="pill">クラウド保存</span></div>
 <div class="notice"><b>大事：</b>取り込んだ画像は、初期設定では外部に送信されません。OCR処理には外部OCRエンジンの読み込みが必要です。画像は自分の資料整理用に保管し、公開ページにはストーリーを再現する量の画像・本文を載せないでください。</div>
@@ -57,9 +86,37 @@
 <button class="btn" id="loginBtn">ログイン</button> <button class="btn ghost" id="logoutBtn">ログアウト</button>
 <span id="authStatus" class="small">未ログイン</span></div>
 <div class="panel" style="margin-top:14px"><div id="dropZone" class="drop"><strong>画像をまとめて追加</strong><p>クリックして写真ライブラリ／ファイルを選択、またはここにドラッグ＆ドロップ。複数選択できます。</p><button class="btn" id="pickFiles">写真・画像を選択</button><input id="fileInput" type="file" accept="image/*" multiple hidden><p>JPEG・PNG・WebP · 100枚以上も小分け処理</p></div>
-<div style="margin-top:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn" id="ocrAll">選択した画像のOCR</button><button class="btn ghost" id="exportIndex">索引をバックアップ</button><button class="btn ghost" id="clearImages">画像記録を削除</button><span id="importStatus" class="small">準備完了</span></div><div class="progress" style="margin-top:12px"><div id="progressBar"></div></div><div id="ocrStatus" class="small" style="margin-top:7px"></div><div id="thumbs" class="thumbs"></div></div>
-<div class="section-head"><div><h2>資料のメタデータ</h2><p>OCR結果を確認し、ストーリーや話数を手動で補完</p></div><span id="imageCount" class="pill">0件</span></div><div id="imageList"></div></section>
-<section id="page-settings" class="hidden"><div class="section-head"><div><h2>データ・設定</h2><p>データを端末内で管理し、必要に応じてバックアップ</p></div></div><div class="two"><div class="panel"><h3>検索について</h3><p class="small">OCRテキスト、人物・タグ、ストーリー名、カード情報を対象にしたキーワード検索です。</p><div class="field hidden"><input id="aiEndpoint"></div><button class="btn hidden" id="saveSettings">設定を保存</button><p class="small">検索語をスペースで区切ると、複数語を含む資料を絞り込めます。</p></div><div class="panel"><h3>バックアップ・復元</h3><p class="small">索引、OCRテキスト、カード記録をJSONでバックアップします。画像本体は含めず、Supabaseに保存されます。</p><button class="btn" id="backupAll">データをバックアップ</button><div class="field"><label>バックアップファイルを読み込む</label><input type="file" id="restoreFile" accept="application/json"></div><button class="btn ghost" id="restoreBtn">復元</button></div></div><div class="panel" style="margin-top:14px"><h3>利用ガイドライン</h3><p class="small">Happy Elements公式の最新ガイドラインと『あんさんぶるスターズ！！』個別ガイドラインを必ず確認してください。ファン制作の非公式サイトであり、公式・公認ではありません。</p><p><a href="https://www.happyelements.co.jp/contents-guideline/" target="_blank" rel="noreferrer">Happy Elements コンテンツ利用ガイドライン ↗</a></p><p><a href="https://ensemble-stars-music.zendesk.com/hc/ja/articles/39158265271833" target="_blank" rel="noreferrer">ゲームの内容をSNS等で公開しても良いですか？ ↗</a></p></div></section>
+<div class="panel" style="margin-top:16px">
+<h3>OCRレイアウト</h3>
+<p class="small">スクショの種類ごとに、話者名と本文がある範囲だけを読み取ります。</p>
+<div class="filters">
+<select id="ocrLayout">
+<option value="story">ストーリー（新旧レイアウト自動判定）</option>
+<option value="home">ホーム会話</option>
+<option value="other">その他（画像全体）</option>
+</select>
+</div>
+</div>
+<div style="margin-top:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn" id="ocrAll">未OCR画像を読み取る</button><button class="btn ghost" id="exportIndex">索引をバックアップ</button><button class="btn ghost" id="clearImages">画像記録を削除</button><span id="importStatus" class="small">準備完了</span></div><div class="progress" style="margin-top:12px"><div id="progressBar"></div></div><div id="ocrStatus" class="small" style="margin-top:7px"></div><div id="thumbs" class="thumbs"></div></div>
+<div class="section-head"><div><h2>資料のメタデータ</h2><p>話者＋本文で内容を管理し、ストーリーや話数を補完</p></div><span id="imageCount" class="pill">0件</span></div><div id="imageList"></div></section>
+<section id="page-settings" class="hidden"><div class="section-head"><div><h2>データ・設定</h2><p>データを端末内で管理し、必要に応じてバックアップ</p></div></div><div class="two"><div class="panel"><h3>検索について</h3><p class="small">OCRテキスト、人物・タグ、ストーリー名、カード情報を対象にしたキーワード検索です。</p><div class="field hidden"><input id="aiEndpoint"></div><button class="btn hidden" id="saveSettings">設定を保存</button><p class="small">検索語をスペースで区切ると、複数語を含む資料を絞り込めます。</p></div><div class="panel"><h3>バックアップ・復元</h3><p class="small">索引、OCRテキスト、カード記録をJSONでバックアップします。画像本体は含めず、Supabaseに保存されます。</p><button class="btn" id="backupAll">データをバックアップ</button><div class="field"><label>バックアップファイルを読み込む</label><input type="file" id="restoreFile" accept="application/json"></div><button class="btn ghost" id="restoreBtn">復元</button></div></div><div class="panel" style="margin-top:14px"><h3>利用ガイドライン</h3><p class="small">Happy Elements公式の最新ガイドラインと『あんさんぶるスターズ！！』個別ガイドラインを必ず確認してください。ファン制作の非公式サイトであり、公式・公認ではありません。</p><p><a href="https://www.happyelements.co.jp/contents-guideline/" target="_blank" rel="noreferrer">Happy Elements コンテンツ利用ガイドライン ↗</a></p><p><a href="https://ensemble-stars-music.zendesk.com/hc/ja/articles/39158265271833" target="_blank" rel="noreferrer">ゲームの内容をSNS等で公開しても良いですか？ ↗</a></p></div></section><div class="panel"><h3>☁️ Supabaseデータベース同期</h3><p class="small">下のSQLをSupabaseのSQL Editorで一度だけ実行すると、OCR結果とカード情報もクラウド保存できます。未実行でも従来のブラウザ保存で試せます。</p><textarea rows="12" readonly style="width:100%">create table if not exists public.archive_records (
+ id text primary key, user_id uuid not null references auth.users(id) on delete cascade,
+ image_path text, story text, speaker text, body text, tags text, layout text, status text,
+ updated_at timestamptz default now()
+);
+alter table public.archive_records enable row level security;
+create policy "own archive records" on public.archive_records for all using (auth.uid()=user_id) with check (auth.uid()=user_id);
+
+create table if not exists public.cards (
+ id text primary key, user_id uuid not null references auth.users(id) on delete cascade,
+ name text not null, date date, rarity text, attribute text, card_type text, event text,
+ da integer, vo integer, pf integer, specialty text, mv text, spp text, center_skill text, skill text,
+ owned text, copies integer default 0, limit_break integer default 0, stories text, source text,
+ image_path text, image_url text, bloom_image_path text, bloom_image_url text,
+ updated_at timestamptz default now()
+);
+alter table public.cards enable row level security;
+create policy "own cards" on public.cards for all using (auth.uid()=user_id) with check (auth.uid()=user_id);</textarea></div>
 <div class="footer">当サイトはファンが個人で制作する非公式アーカイブであり、Happy Elements株式会社および『あんさんぶるスターズ！！』公式とは一切関係ありません。<br>当ページは、Happy Elements株式会社「あんさんぶるスターズ！！」の画像を利用しております。該当画像の転載・配布等は禁止しております。 ©Happy Elements K.K</div>
 </main></div></div>
 <script>
@@ -71,29 +128,169 @@ const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 let images=[], cards=JSON.parse(localStorage.getItem('ibara_cards')||'[]'), stories=JSON.parse(localStorage.getItem('ibara_stories')||'[]');
 async function requireUser(){const {data:{user}}=await sb.auth.getUser();if(!user)throw new Error('先にログインしてください。');return user}
 async function refreshAuth(){const {data:{user}}=await sb.auth.getUser();if($('#authStatus'))$('#authStatus').textContent=user?'ログイン中：'+(user.email||user.id):'未ログイン';return user}
-async function getAll(){const user=await refreshAuth();if(!user)return[];const {data,error}=await sb.storage.from(BUCKET).list('private',{limit:1000});if(error)throw error;const meta=JSON.parse(localStorage.getItem('ibara_image_meta')||'{}');const rows=[];for(const f of (data||[]).filter(x=>x.name)){const path='private/'+f.name;const {data:s}=await sb.storage.from(BUCKET).createSignedUrl(path,3600);if(!s)continue;rows.push(Object.assign({id:path,path,name:f.name,url:s.signedUrl,date:f.created_at?new Date(f.created_at).toLocaleDateString('ja-JP'):'',story:'',ocr:'',tags:'',status:'クラウド保存済み'},meta[path]||{}))}return rows}
-async function putImg(x){const meta=JSON.parse(localStorage.getItem('ibara_image_meta')||'{}');meta[x.path||x.id]={story:x.story||'',ocr:x.ocr||'',tags:x.tags||'',status:x.status||''};localStorage.setItem('ibara_image_meta',JSON.stringify(meta));return x.id}
+async function getAll(){const user=await refreshAuth();if(!user)return[];const {data,error}=await sb.storage.from(BUCKET).list('private',{limit:1000});if(error)throw error;const meta=JSON.parse(localStorage.getItem('ibara_image_meta')||'{}');const rows=[];for(const f of (data||[]).filter(x=>x.name)){const path='private/'+f.name;const {data:s}=await sb.storage.from(BUCKET).createSignedUrl(path,3600);if(!s)continue;rows.push(Object.assign({id:path,path,name:f.name,url:s.signedUrl,date:f.created_at?new Date(f.created_at).toLocaleDateString('ja-JP'):'',story:'',speaker:'',body:'',ocr:'',tags:'',layout:'story',status:'クラウド保存済み'},meta[path]||{}))}return rows}
+async function putImg(x){const meta=JSON.parse(localStorage.getItem('ibara_image_meta')||'{}');meta[x.path||x.id]={story:x.story||'',speaker:x.speaker||'',body:x.body||'',ocr:x.ocr||'',tags:x.tags||'',layout:x.layout||'story',status:x.status||''};localStorage.setItem('ibara_image_meta',JSON.stringify(meta));return x.id}
 async function delImg(id){const {error}=await sb.storage.from(BUCKET).remove([String(id)]);if(error)throw error;const meta=JSON.parse(localStorage.getItem('ibara_image_meta')||'{}');delete meta[id];localStorage.setItem('ibara_image_meta',JSON.stringify(meta))}
 function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function saveCards(){localStorage.setItem('ibara_cards',JSON.stringify(cards))}
 function saveStories(){localStorage.setItem('ibara_stories',JSON.stringify(stories))}
 function go(page){$$('main section').forEach(s=>s.classList.add('hidden'));$('#page-'+page).classList.remove('hidden');$$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='screens')renderImages();if(page==='cards')renderCards();if(page==='stories')renderStories();if(page==='events')renderEvents();if(page==='home')renderHome();window.scrollTo({top:0,behavior:'smooth'})}
 $$('[data-page]').forEach(b=>b.onclick=()=>go(b.dataset.page));$$('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
-function matchText(obj,q){const text=[obj.name,obj.title,obj.story,obj.episode,obj.event,obj.text,obj.ocr,obj.note,obj.tags,obj.type,obj.date].filter(Boolean).join(' ').toLowerCase();return q.toLowerCase().split(/\s+/).filter(Boolean).every(w=>text.includes(w))}
+function matchText(obj,q){const text=[obj.name,obj.title,obj.story,obj.episode,obj.event,obj.text,obj.speaker,obj.body,obj.ocr,obj.note,obj.tags,obj.type,obj.date].filter(Boolean).join(' ').toLowerCase();return q.toLowerCase().split(/\s+/).filter(Boolean).every(w=>text.includes(w))}
 function renderHome(){const img=images.length;$('#statImages').textContent=img;$('#statTexts').textContent=images.filter(x=>x.ocr).length+stories.length;$('#statCards').textContent=cards.length;$('#statUnknown').textContent=images.filter(x=>!x.story).length;$('#navCount').textContent=img;$('#recent').innerHTML=[...stories.slice(-3).reverse(),...cards.slice(-3).reverse()].slice(0,6).map(x=>`<article class="record"><span class="tag">${esc(x.type||'カード')}</span><h3>${esc(x.title||x.name||'無題')}</h3><p>${esc(x.story||x.event||x.note||'出典未登録')}</p><div class="meta">${esc(x.date||'日付未設定')}</div></article>`).join('')||'<div class="empty" style="grid-column:1/-1">まだ資料がありません。スクショやカード情報を追加してください。</div>'}
-function renderImages(){ $('#imageCount').textContent=images.length+'件';$('#thumbs').innerHTML=images.slice(-30).reverse().map(x=>`<div class="thumb"><img src="${x.url||''}" alt=""><div>${esc(x.name)}</div></div>`).join('');$('#imageList').innerHTML=images.length?images.slice().reverse().map(x=>`<div class="record" style="margin:10px 0"><div style="display:flex;gap:12px"><img src="${x.url||''}" style="width:82px;height:82px;object-fit:cover;border-radius:8px" alt=""><div style="flex:1;min-width:0"><b>${esc(x.name)}</b><div class="meta">${esc(x.date||'撮影日不明')} · ${esc(x.status||'未分類')}</div><div class="field"><label>ストーリー／話数</label><input data-edit="story" data-id="${x.id}" value="${esc(x.story||'')}" placeholder="特定できなければ空欄でOK"></div><div class="field"><label>OCRテキスト（短い断片の検索用）</label><textarea data-edit="ocr" data-id="${x.id}" rows="2" placeholder="OCR結果・短い抜粋・メモ">${esc(x.ocr||'')}</textarea></div><div class="field"><label>人物・タグ</label><input data-edit="tags" data-id="${x.id}" value="${esc(x.tags||'')}" placeholder="茨、凪砂、イベント名など"></div><button class="btn ghost" data-saveimg="${x.id}">記録を保存</button> <button class="btn ghost" data-deleteimg="${x.id}">削除</button></div></div></div>`).join(''):'<div class="empty">まだ画像が登録されていません。</div>';$$('[data-saveimg]').forEach(b=>b.onclick=async()=>{const x=images.find(i=>i.id===b.dataset.saveimg);if(!x)return;$$(`[data-id="${x.id}"]`).forEach(el=>x[el.dataset.edit]=el.value);x.status=x.story?'話数候補あり':'未分類';await putImg(x);images=await getAll();renderImages();renderHome()});$$('[data-deleteimg]').forEach(b=>b.onclick=async()=>{if(confirm('この画像記録を削除しますか？')){await delImg(b.dataset.deleteimg);images=await getAll();renderImages();renderHome()}})}
-function renderCards(){const years=[...new Set(cards.map(c=>(c.date||'').slice(0,4)).filter(Boolean))].sort().reverse();$('#cardYear').innerHTML='<option value="">全年度</option>'+years.map(y=>`<option>${esc(y)}</option>`).join('');const q=$('#cardFilter').value.toLowerCase(),year=$('#cardYear').value;const list=cards.filter(c=>(!q||matchText(c,q))&&(!year||(c.date||'').startsWith(year))).sort((a,b)=>(b.date||'').localeCompare(a.date||''));$('#cardList').innerHTML=list.length?list.map(c=>`<article class="record" style="margin:10px 0"><span class="tag">${esc(c.rarity||'カード')}</span><h3>${esc(c.name)}</h3><p><b>実装日：</b>${esc(c.date||'未確認')}　 <b>企画：</b>${esc(c.event||'未登録')}</p><p><b>関連ストーリー：</b>${esc(c.stories||'未登録')}</p>${c.source?`<p><a href="${esc(c.source)}" target="_blank" rel="noreferrer">出典を開く ↗</a></p>`:''}<button class="btn ghost" data-delcard="${c.id}">削除</button></article>`).join(''):'<div class="empty">カード記録はまだありません。公式発表などを参照して追加してください。</div>';$$('[data-delcard]').forEach(b=>b.onclick=()=>{cards=cards.filter(c=>c.id!==b.dataset.delcard);saveCards();renderCards();renderHome()})}
+function renderImages(){
+ $('#imageCount').textContent=images.length+'件';
+ $('#thumbs').innerHTML=images.slice(-30).reverse().map(x=>`<div class="thumb"><img src="${x.url||''}" alt=""><div>${esc(x.speaker||x.name)}</div></div>`).join('');
+ $('#imageList').innerHTML=images.length?images.slice().reverse().map(x=>`<div class="record" style="margin:10px 0"><div style="display:flex;gap:12px"><img src="${x.url||''}" style="width:82px;height:82px;object-fit:cover;border-radius:8px" alt=""><div style="flex:1;min-width:0"><b>${esc(x.speaker?x.speaker+'｜'+(x.body||'').slice(0,34):x.name)}</b><div class="meta">${esc(x.date||'撮影日不明')} · ${esc(x.status||'未分類')} · ${esc(x.layout==='home'?'ホーム会話':x.layout==='other'?'その他':'通常ストーリー')}</div>
+ <div class="field"><label>ストーリー／話数</label><input data-edit="story" data-id="${x.id}" value="${esc(x.story||'')}" placeholder="特定できなければ空欄でOK"></div>
+ <div class="field"><label>話者</label><input data-edit="speaker" data-id="${x.id}" value="${esc(x.speaker||'')}" placeholder="例：茨"></div>
+ <div class="field"><label>本文</label><textarea data-edit="body" data-id="${x.id}" rows="3" placeholder="会話本文">${esc(x.body||x.ocr||'')}</textarea></div>
+ <div class="field"><label>人物・タグ</label><input data-edit="tags" data-id="${x.id}" value="${esc(x.tags||'')}" placeholder="茨、凪砂、イベント名など"></div>
+ <button class="btn ghost" data-saveimg="${x.id}">記録を保存</button> <button class="btn ghost" data-deleteimg="${x.id}">削除</button></div></div></div>`).join(''):'<div class="empty">まだ画像が登録されていません。</div>';
+ $$('[data-saveimg]').forEach(b=>b.onclick=async()=>{const x=images.find(i=>i.id===b.dataset.saveimg);if(!x)return;$$(`[data-id="${x.id}"]`).forEach(el=>x[el.dataset.edit]=el.value);x.ocr=[x.speaker,x.body].filter(Boolean).join(' ');x.status=x.body?'OCR済み':(x.story?'話数候補あり':'未分類');await putImg(x);
+ const u=await requireUser();
+ await dbUpsert('archive_records',{id:x.id,user_id:u.id,image_path:x.path||'',story:x.story||'',speaker:x.speaker||'',body:x.body||'',tags:x.tags||'',layout:x.layout||'story',status:x.status||''});
+ images=await getAll();renderImages();renderHome()});
+ $$('[data-deleteimg]').forEach(b=>b.onclick=async()=>{if(confirm('この画像記録を削除しますか？')){await delImg(b.dataset.deleteimg);images=await getAll();renderImages();renderHome()}});
+}
+
+async function dbUpsert(table,row){
+ try{
+  const {error}=await sb.from(table).upsert(row,{onConflict:'id'});
+  if(error) throw error;
+  return true;
+ }catch(e){console.warn(table+' DB保存は未設定のためローカル保存を継続:',e);return false}
+}
+async function dbDelete(table,id){
+ try{const {error}=await sb.from(table).delete().eq('id',id);if(error)throw error;return true}catch(e){console.warn(e);return false}
+}
+async function syncCloudData(){
+ try{
+  const u=await requireUser();
+  const [cr,sr]=await Promise.all([sb.from('cards').select('*').eq('user_id',u.id),sb.from('archive_records').select('*').eq('user_id',u.id)]);
+  if(!cr.error&&cr.data?.length){cards=cr.data.map(c=>({...c,cardType:c.card_type||c.cardType,imageUrl:c.image_url||c.imageUrl,bloomImageUrl:c.bloom_image_url||c.bloomImageUrl,centerSkill:c.center_skill||c.centerSkill}));saveCards()}
+  if(!sr.error&&sr.data?.length){
+   for(const r of sr.data){const x=images.find(i=>i.id===r.id);if(x)Object.assign(x,{speaker:r.speaker||'',body:r.body||'',story:r.story||'',tags:r.tags||'',layout:r.layout||x.layout,status:r.status||x.status,ocr:[r.speaker,r.body].filter(Boolean).join(' ')})}
+   for(const x of images)await putImg(x)
+  }
+ }catch(e){console.warn('クラウドDB同期は未設定:',e)}
+}
+function renderCards(){
+ const years=[...new Set(cards.map(c=>(c.date||'').slice(0,4)).filter(Boolean))].sort().reverse();
+ const keep=$('#cardYear').value;$('#cardYear').innerHTML='<option value="">全年度</option>'+years.map(y=>`<option>${esc(y)}</option>`).join('');$('#cardYear').value=keep;
+ const q=$('#cardFilter').value.toLowerCase(),year=$('#cardYear').value,owned=$('#cardOwnedFilter').value,feat=$('#cardFeatureFilter').value,attr=$('#cardAttrFilter').value,spec=$('#cardSpecialtyFilter').value;
+ const has=v=>v&&v.trim()&&v.trim()!=='なし';
+ const list=cards.filter(c=>(!q||matchText(c,q))&&(!year||(c.date||'').startsWith(year))&&(!owned||c.owned===owned)&&(!attr||c.attribute===attr)&&(!spec||c.specialty===spec)&&(!feat||(feat==='mv'&&has(c.mv))||(feat==='spp'&&has(c.spp))||(feat==='both'&&has(c.mv)&&has(c.spp)))).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+ $('#cardList').innerHTML=list.length?list.map(c=>{
+  const total=(Number(c.da)||0)+(Number(c.vo)||0)+(Number(c.pf)||0);
+  const imgs=[c.imageUrl,c.bloomImageUrl].filter(Boolean).map((u,i)=>`<div><img src="${esc(u)}" style="width:105px;max-height:145px;object-fit:cover;border-radius:10px"><div class="small">${i?'開花後':'開花前'}</div></div>`).join('');
+  return `<article class="record" style="margin:10px 0"><div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">${imgs}<div style="flex:1;min-width:240px"><span class="tag">${esc(c.rarity||'カード')}</span> <span class="tag">${esc(c.attribute||'属性未登録')}</span> <span class="tag">${esc(c.owned||'未所持')}</span><h3>${esc(c.name)}</h3>
+  <p><b>実装：</b>${esc(c.date||'未確認')}　<b>区分：</b>${esc(c.cardType||c.card_type||'未登録')}　<b>企画：</b>${esc(c.event||'未登録')}</p>
+  <p><b>所持：</b>${esc(c.copies??0)}枚 / ${esc(c.limit_break??c.limitBreak??0)}凸</p>
+  <p><b>ステータス：</b>Da ${esc(c.da||'-')} / Vo ${esc(c.vo||'-')} / Pf ${esc(c.pf||'-')} ${total?`/ 合計 ${total}`:''}　<b>特化：</b>${esc(c.specialty||'未登録')}</p>
+  <p><b>MV衣装：</b>${esc(c.mv||'未登録')}　<b>SPP：</b>${esc(c.spp||'未登録')}</p>
+  <p><b>センタースキル：</b>${esc(c.centerSkill||c.center_skill||'未登録')}</p><p><b>ライブ／サポート：</b>${esc(c.skill||'未登録')}</p>
+  <p><b>関連ストーリー：</b>${esc(c.stories||'未登録')}</p>${c.source?`<p><a href="${esc(c.source)}" target="_blank" rel="noreferrer">出典を開く ↗</a></p>`:''}
+  <button class="btn ghost" data-delcard="${c.id}">削除</button></div></div></article>`}).join(''):'<div class="empty">条件に合うカード記録はありません。</div>';
+ $$('[data-delcard]').forEach(b=>b.onclick=async()=>{if(!confirm('このカード記録を削除しますか？'))return;cards=cards.filter(c=>c.id!==b.dataset.delcard);saveCards();await dbDelete('cards',b.dataset.delcard);renderCards();renderHome()})
+}
 function renderStories(){const q=$('#storyFilter').value.toLowerCase(),type=$('#storyType').value;const list=stories.filter(s=>(!q||matchText(s,q))&&(!type||s.type===type));$('#storyList').innerHTML=list.length?list.map(s=>`<div class="resultrow"><span class="tag">${esc(s.type||'資料')}</span><b> ${esc(s.title||s.name)}</b><p>${esc(s.summary||s.note||'概要未登録')}</p><div class="meta">${esc(s.story||'話数未特定')} · ${esc(s.date||'日付未設定')}</div></div>`).join(''):'<div class="empty">ストーリー索引は未登録です。スクショのOCR結果やメモから記録を作成してください。</div>'}
 function renderEvents(){const list=stories.filter(s=>/イベント|コラボ|キャンペーン/.test(s.type||''));$('#eventList').innerHTML=list.length?list.map(s=>`<div class="resultrow"><b>${esc(s.title||s.name)}</b><p>${esc(s.summary||s.note||'')}</p><div class="meta">${esc(s.date||'期間未登録')} · ${esc(s.source||'出典未登録')}</div></div>`).join(''):'<div class="empty">イベント・コラボ情報は未登録です。</div>'}
 $('#heroSearch').onclick=()=>{$('#semanticQuery').value=$('#heroQuery').value;go('search');runSearch()};$('#heroQuery').addEventListener('keydown',e=>{if(e.key==='Enter')$('#heroSearch').click()});$$('.sample').forEach(b=>b.onclick=()=>{$('#heroQuery').value=b.textContent;$('#heroSearch').click()});$$('.sample2').forEach(b=>b.onclick=()=>{$('#semanticQuery').value=b.textContent;runSearch()});
-async function runSearch(){const q=$('#semanticQuery').value.trim();if(!q){$('#searchResults').innerHTML='<div class="empty">検索語を入力してください。</div>';return}const scope=$('#searchScope').value;let rows=[];if(scope==='all'||scope==='image')images.forEach(x=>{if(matchText(x,q)||q.split(/\s+/).some(w=>(x.ocr||'').includes(w)))rows.push({title:x.story||x.name,desc:x.ocr||'OCR未実行。人物・タグ・話数を登録すると検索できます。',meta:'スクショ · '+(x.date||'日付不明'),score:score(x,q)})});if(scope==='all'||scope==='story')stories.forEach(x=>{if(matchText(x,q))rows.push({title:x.title||x.name,desc:x.summary||x.note||'',meta:(x.type||'ストーリー')+' · '+(x.story||'話数未特定'),score:score(x,q)})});if(scope==='all'||scope==='card')cards.forEach(x=>{if(matchText(x,q))rows.push({title:x.name,desc:'実装日：'+(x.date||'未確認')+' · 関連ストーリー：'+(x.stories||'未登録'),meta:'カード · '+(x.event||'企画未登録'),score:score(x,q)})});rows.sort((a,b)=>b.score-a.score);const endpoint=localStorage.getItem('ibara_ai_endpoint');if(endpoint){try{const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:q,scope,results:rows.map(x=>({title:x.title,text:x.desc,meta:x.meta}))})});if(r.ok){const data=await r.json();if(Array.isArray(data.results))rows=data.results.map(x=>({title:x.title,desc:x.snippet||x.text||'',meta:x.source||x.meta||'全文検索',score:x.score||0}))}}catch(e){$('#searchNotice').textContent='AI APIに接続できなかったため、ローカル検索結果を表示します。'}}$('#searchResults').innerHTML=rows.length?`<p class="small">${rows.length}件の候補。結果を開いて出典・話数を確認してください。</p>`+rows.slice(0,100).map(x=>`<div class="resultrow"><span class="score">一致度 ${Math.round(x.score*100)}%</span><b>${esc(x.title)}</b><p>${esc((x.desc||'').slice(0,280))}${(x.desc||'').length>280?'…':''}</p><div class="meta">${esc(x.meta)}</div></div>`).join(''):'<div class="empty">一致する資料がありません。OCR・タグ・話数メモを追加すると検索精度が上がります。</div>'}
-function score(o,q){const all=[o.name,o.title,o.story,o.episode,o.event,o.text,o.ocr,o.note,o.tags,o.type,o.date].filter(Boolean).join(' ').toLowerCase(),words=q.toLowerCase().split(/\s+/).filter(Boolean);if(!words.length)return 0;return words.reduce((n,w)=>n+(all.includes(w)?1:0),0)/words.length}
-$('#runSearch').onclick=runSearch;$('#storyFilter').oninput=renderStories;$('#storyType').onchange=renderStories;$('#cardFilter').oninput=renderCards;$('#cardYear').onchange=renderCards;
-$('#newCardBtn').onclick=()=>$('#cardForm').hidden=false;$('#cancelCard').onclick=()=>$('#cardForm').hidden=true;$('#saveCard').onclick=()=>{const name=$('#cName').value.trim();if(!name){alert('カード名を入力してください');return}cards.push({id:crypto.randomUUID(),name,date:$('#cDate').value,rarity:$('#cRarity').value,event:$('#cEvent').value,stories:$('#cStories').value,source:$('#cSource').value,type:'カード'});saveCards();['cName','cDate','cEvent','cStories','cSource'].forEach(id=>$('#'+id).value='');$('#cardForm').hidden=true;renderCards();renderHome()};
+async function runSearch(){const q=$('#semanticQuery').value.trim();if(!q){$('#searchResults').innerHTML='<div class="empty">検索語を入力してください。</div>';return}const scope=$('#searchScope').value;let rows=[];if(scope==='all'||scope==='image')images.forEach(x=>{if(matchText(x,q)||q.split(/\s+/).some(w=>(x.ocr||'').includes(w)))rows.push({title:x.story||x.name,desc:[x.speaker,x.body].filter(Boolean).join('：')||'OCR未実行。話者・本文・タグを登録すると検索できます。',meta:'スクショ · '+(x.date||'日付不明'),score:score(x,q)})});if(scope==='all'||scope==='story')stories.forEach(x=>{if(matchText(x,q))rows.push({title:x.title||x.name,desc:x.summary||x.note||'',meta:(x.type||'ストーリー')+' · '+(x.story||'話数未特定'),score:score(x,q)})});if(scope==='all'||scope==='card')cards.forEach(x=>{if(matchText(x,q))rows.push({title:x.name,desc:'実装日：'+(x.date||'未確認')+' · 関連ストーリー：'+(x.stories||'未登録'),meta:'カード · '+(x.event||'企画未登録'),score:score(x,q)})});rows.sort((a,b)=>b.score-a.score);const endpoint=localStorage.getItem('ibara_ai_endpoint');if(endpoint){try{const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:q,scope,results:rows.map(x=>({title:x.title,text:x.desc,meta:x.meta}))})});if(r.ok){const data=await r.json();if(Array.isArray(data.results))rows=data.results.map(x=>({title:x.title,desc:x.snippet||x.text||'',meta:x.source||x.meta||'全文検索',score:x.score||0}))}}catch(e){$('#searchNotice').textContent='AI APIに接続できなかったため、ローカル検索結果を表示します。'}}$('#searchResults').innerHTML=rows.length?`<p class="small">${rows.length}件の候補。結果を開いて出典・話数を確認してください。</p>`+rows.slice(0,100).map(x=>`<div class="resultrow"><span class="score">一致度 ${Math.round(x.score*100)}%</span><b>${esc(x.title)}</b><p>${esc((x.desc||'').slice(0,280))}${(x.desc||'').length>280?'…':''}</p><div class="meta">${esc(x.meta)}</div></div>`).join(''):'<div class="empty">一致する資料がありません。OCR・タグ・話数メモを追加すると検索精度が上がります。</div>'}
+function score(o,q){const all=[o.name,o.title,o.story,o.episode,o.event,o.text,o.speaker,o.body,o.ocr,o.note,o.tags,o.type,o.date].filter(Boolean).join(' ').toLowerCase(),words=q.toLowerCase().split(/\s+/).filter(Boolean);if(!words.length)return 0;return words.reduce((n,w)=>n+(all.includes(w)?1:0),0)/words.length}
+$('#runSearch').onclick=runSearch;$('#storyFilter').oninput=renderStories;$('#storyType').onchange=renderStories;$('#cardFilter').oninput=renderCards;$('#cardYear').onchange=renderCards;$('#cardOwnedFilter').onchange=renderCards;$('#cardFeatureFilter').onchange=renderCards;$('#cardAttrFilter').onchange=renderCards;$('#cardSpecialtyFilter').onchange=renderCards;
+$('#newCardBtn').onclick=()=>$('#cardForm').hidden=false;
+$('#cancelCard').onclick=()=>$('#cardForm').hidden=true;
+async function uploadCardImage(file){
+ if(!file)return {path:'',url:''}; await requireUser();
+ const safe=file.name.replace(/[^a-zA-Z0-9._-]+/g,'_');
+ const path='private/cards/'+Date.now()+'-'+crypto.randomUUID()+'-'+safe;
+ const {error}=await sb.storage.from(BUCKET).upload(path,file,{contentType:file.type,upsert:false});if(error)throw error;
+ const {data}=await sb.storage.from(BUCKET).createSignedUrl(path,60*60*24*7);
+ return {path,url:data?.signedUrl||''};
+}
+$('#ocrCardDetail').onclick=async()=>{
+ const f=$('#cImage').files[0]||$('#cBloomImage').files[0];if(!f){alert('先にカード詳細のスクショを選択してください');return}
+ $('#cardOcrStatus').textContent='読み取り中…';
+ try{
+  if(!window.Tesseract){await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.onload=res;s.onerror=rej;document.head.append(s)})}
+  const worker=await Tesseract.createWorker('jpn+eng'),r=await worker.recognize(f),t=cleanOCR(r.data.text);await worker.terminate();
+  $('#cStories').value=($('#cStories').value?$('#cStories').value+'\n':'')+'【カード画像OCRメモ】'+t;
+  $('#cardOcrStatus').textContent='読み取り結果を関連ストーリー欄へ追記しました。数値等は画像を見て確認してください。';
+ }catch(e){$('#cardOcrStatus').textContent='OCRに失敗しました。'}
+};
+$('#saveCard').onclick=async()=>{
+ const name=$('#cName').value.trim();if(!name){alert('カード名を入力してください');return}
+ try{
+  const user=await requireUser(),da=$('#cDa').value,vo=$('#cVo').value,pf=$('#cPf').value;
+  let specialty=$('#cSpecialty').value;if(!specialty&&[da,vo,pf].some(Boolean)){const a=[['Da',Number(da)||0],['Vo',Number(vo)||0],['Pf',Number(pf)||0]].sort((x,y)=>y[1]-x[1]);specialty=a[0][1]===a[1][1]?'バランス':a[0][0]}
+  const img=await uploadCardImage($('#cImage').files[0]),bloom=await uploadCardImage($('#cBloomImage').files[0]);
+  const c={id:crypto.randomUUID(),user_id:user.id,name,date:$('#cDate').value,rarity:$('#cRarity').value,attribute:$('#cAttribute').value,cardType:$('#cType').value,event:$('#cEvent').value,da,vo,pf,specialty,mv:$('#cMv').value,spp:$('#cSpp').value,centerSkill:$('#cCenterSkill').value,skill:$('#cSkill').value,owned:$('#cOwned').value,copies:Number($('#cCopies').value)||0,limitBreak:Number($('#cLimit').value)||0,stories:$('#cStories').value,source:$('#cSource').value,imagePath:img.path,imageUrl:img.url,bloomImagePath:bloom.path,bloomImageUrl:bloom.url,type:'カード'};
+  cards.push(c);saveCards();
+  await dbUpsert('cards',{id:c.id,user_id:user.id,name:c.name,date:c.date||null,rarity:c.rarity,attribute:c.attribute,card_type:c.cardType,event:c.event,da:Number(c.da)||null,vo:Number(c.vo)||null,pf:Number(c.pf)||null,specialty:c.specialty,mv:c.mv,spp:c.spp,center_skill:c.centerSkill,skill:c.skill,owned:c.owned,copies:c.copies,limit_break:c.limitBreak,stories:c.stories,source:c.source,image_path:c.imagePath,image_url:c.imageUrl,bloom_image_path:c.bloomImagePath,bloom_image_url:c.bloomImageUrl});
+  ['cName','cDate','cEvent','cDa','cVo','cPf','cMv','cSpp','cCenterSkill','cSkill','cStories','cSource','cCopies'].forEach(id=>$('#'+id).value='');$('#cImage').value='';$('#cBloomImage').value='';$('#cardForm').hidden=true;renderCards();renderHome()
+ }catch(e){alert('カードを保存できませんでした：'+(e.message||e))}
+};
 $('#pickFiles').onclick=()=>$('#fileInput').click();$('#dropZone').onclick=e=>{if(e.target.id==='dropZone'||e.target.tagName==='STRONG'||e.target.tagName==='P')$('#fileInput').click()};$('#fileInput').onchange=e=>importFiles([...e.target.files]);
 const dz=$('#dropZone');['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('drag')}));['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('drag')}));dz.addEventListener('drop',e=>importFiles([...e.dataTransfer.files].filter(f=>f.type.startsWith('image/'))));
 async function importFiles(files){if(!files.length)return;try{await requireUser();let done=0;$('#importStatus').textContent=files.length+'枚をアップロード中…';for(const f of files){if(!f.type.startsWith('image/'))continue;const safe=f.name.replace(/[^a-zA-Z0-9._-]+/g,'_');const path='private/'+Date.now()+'-'+crypto.randomUUID()+'-'+safe;const {error}=await sb.storage.from(BUCKET).upload(path,f,{contentType:f.type,upsert:false});if(error)throw error;done++;$('#progressBar').style.width=Math.round(done/files.length*100)+'%';$('#importStatus').textContent=done+'/'+files.length+'枚をアップロード中…'}images=await getAll();$('#importStatus').textContent=done+'枚をSupabaseに保存しました';renderImages();renderHome()}catch(e){$('#importStatus').textContent='アップロード失敗：'+(e.message||e);alert(e.message||e)}}
-$('#ocrAll').onclick=async()=>{if(!images.length){alert('先に画像を取り込んでください');return}$('#ocrStatus').textContent='OCRエンジンを準備しています…';try{if(!window.Tesseract){await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.onload=res;s.onerror=rej;document.head.append(s)})}const worker=await Tesseract.createWorker('jpn+eng');let n=0;for(const x of images){if(x.ocr&&x.ocr.trim())continue;const r=await worker.recognize(x.url);x.ocr=r.data.text||'';x.status=x.ocr?'OCR済み':'文字なし';await putImg(x);n++;$('#progressBar').style.width=Math.round((n/Math.max(1,images.filter(y=>!y.ocr).length))*100)+'%';$('#ocrStatus').textContent=`OCR処理中 ${n}件：${x.name}`}await worker.terminate();images=await getAll();$('#ocrStatus').textContent='OCRが完了しました。抽出テキストを確認して話数や人物を補完してください。';renderImages();renderHome()}catch(e){$('#ocrStatus').textContent='OCRエンジンを読み込めませんでした。インターネット接続を確認するか、OCRテキストを手動入力してください。'}}
+function cropCanvas(url,p){
+ return new Promise((resolve,reject)=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{const W=im.naturalWidth,H=im.naturalHeight,c=document.createElement('canvas');c.width=Math.max(1,Math.round(W*p.w*2));c.height=Math.max(1,Math.round(H*p.h*2));const ctx=c.getContext('2d');ctx.drawImage(im,W*p.x,H*p.y,W*p.w,H*p.h,0,0,c.width,c.height);resolve(c)};im.onerror=reject;im.src=url})
+}
+const OCR_PRESETS={
+ // Current story layout: supplied screenshots 1 and 3.
+ storyNew:{speaker:{x:.26,y:.66,w:.18,h:.10},body:{x:.25,y:.72,w:.50,h:.23}},
+ // Legacy story layout: supplied screenshot 2.
+ storyOld:{speaker:{x:.25,y:.66,w:.18,h:.10},body:{x:.25,y:.72,w:.50,h:.22}},
+ // Home screen: supplied screenshot 4.
+ home:{speaker:{x:.34,y:.72,w:.16,h:.10},body:{x:.35,y:.78,w:.31,h:.17}}
+};
+async function recognizeRegion(worker,url,p){const c=await cropCanvas(url,p);const r=await worker.recognize(c);return {text:cleanOCR(r.data.text),confidence:Number(r.data.confidence)||0}}
+async function recognizeStoryAuto(worker,url){
+ const candidates=[];
+ for(const key of ['storyNew','storyOld']){
+  const p=OCR_PRESETS[key],s=await recognizeRegion(worker,url,p.speaker),b=await recognizeRegion(worker,url,p.body);
+  // Prefer a candidate with readable Japanese dialogue and higher OCR confidence.
+  const jp=(b.text.match(/[\u3040-\u30ff\u3400-\u9fff]/g)||[]).length;
+  candidates.push({key,speaker:s.text.replace(/\s/g,'').slice(0,20),body:b.text,score:b.confidence+s.confidence*.25+jp*.35});
+ }
+ return candidates.sort((a,b)=>b.score-a.score)[0];
+}
+function cleanOCR(s){return (s||'').replace(/[|｜]/g,' ').replace(/\s+/g,' ').replace(/^[^\p{L}\p{N}「『（【]+/u,'').trim()}
+$('#ocrAll').onclick=async()=>{
+ if(!images.length){alert('先に画像を取り込んでください');return}
+ const layout=$('#ocrLayout').value;
+ $('#ocrStatus').textContent='OCRエンジンを準備しています…';
+ try{
+  if(!window.Tesseract){await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.onload=res;s.onerror=rej;document.head.append(s)})}
+  const worker=await Tesseract.createWorker('jpn+eng');
+  const targets=images.filter(x=>!(x.body&&x.body.trim()));
+  let n=0;
+  for(const x of targets){
+   x.layout=layout;
+   if(layout==='other'){
+    const r=await worker.recognize(x.url);x.body=cleanOCR(r.data.text);x.speaker='';
+   }else if(layout==='story'){
+    const best=await recognizeStoryAuto(worker,x.url);x.speaker=best.speaker;x.body=best.body;x.layoutVariant=best.key;
+   }else{
+    const p=OCR_PRESETS.home,s=await recognizeRegion(worker,x.url,p.speaker),b=await recognizeRegion(worker,x.url,p.body);
+    x.speaker=s.text.replace(/\s/g,'').slice(0,20);x.body=b.text;
+   }
+   x.ocr=[x.speaker,x.body].filter(Boolean).join(' ');
+   x.status=x.body?'OCR済み':'文字なし';
+   await putImg(x);
+ const u=await requireUser();
+ await dbUpsert('archive_records',{id:x.id,user_id:u.id,image_path:x.path||'',story:x.story||'',speaker:x.speaker||'',body:x.body||'',tags:x.tags||'',layout:x.layout||'story',status:x.status||''});
+ n++;
+   $('#progressBar').style.width=Math.round(n/Math.max(1,targets.length)*100)+'%';
+   $('#ocrStatus').textContent=`${layout==='story'?'ストーリー':layout==='home'?'ホーム会話':'その他'} OCR ${n}/${targets.length}：${x.name}`;
+  }
+  await worker.terminate();images=await getAll();
+  $('#ocrStatus').textContent='OCR完了。話者と本文を確認し、誤読だけ手修正してください。';
+  renderImages();renderHome();
+ }catch(e){console.error(e);$('#ocrStatus').textContent='OCRに失敗しました。通信状態を確認するか、話者・本文を手動入力してください。'}
+};
 $('#clearImages').onclick=async()=>{if(!confirm('Supabaseに保存した画像をすべて削除しますか？'))return;try{await requireUser();const paths=images.map(x=>x.path).filter(Boolean);if(paths.length){const {error}=await sb.storage.from(BUCKET).remove(paths);if(error)throw error}localStorage.removeItem('ibara_image_meta');images=await getAll();renderImages();renderHome()}catch(e){alert('削除できませんでした：'+(e.message||e))}};
 function download(name,data,type='application/json'){const blob=new Blob([data],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 $('#exportIndex').onclick=()=>download('ibara-image-index.json',JSON.stringify(images.map(({url,...x})=>x),null,2));$('#backupAll').onclick=()=>download('ibara-archive-backup.json',JSON.stringify({cards,stories,images:images.map(({url,...x})=>x),settings:{aiEndpoint:localStorage.getItem('ibara_ai_endpoint')||''}},null,2));$('#saveSettings').onclick=()=>{localStorage.setItem('ibara_ai_endpoint',$('#aiEndpoint').value.trim());alert('設定を保存しました')};$('#restoreBtn').onclick=async()=>{const f=$('#restoreFile').files[0];if(!f){alert('バックアップファイルを選択してください');return}try{const d=JSON.parse(await f.text());if(d.cards){cards=d.cards;saveCards()}if(d.stories){stories=d.stories;saveStories()}if(d.settings?.aiEndpoint)localStorage.setItem('ibara_ai_endpoint',d.settings.aiEndpoint);alert('索引を復元しました。画像本体はバックアップに含まれていません。');renderHome();renderCards();renderStories()}catch(e){alert('ファイルを読み込めませんでした')}};$('#aiEndpoint').value=localStorage.getItem('ibara_ai_endpoint')||'';
